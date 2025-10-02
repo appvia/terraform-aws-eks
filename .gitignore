@@ -45,3 +45,7 @@ todo.md
 # Ignore lambda zip files and build directories
 *.zip
 builds/
+
+# Ignore terraform lock file
+.terraform.lock.hcl
+examples/basic/.terraform.lock.hcl

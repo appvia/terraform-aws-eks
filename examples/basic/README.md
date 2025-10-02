@@ -1,7 +1,9 @@
 <!-- BEGIN_TF_DOCS -->
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.34 |
 
 ## Inputs
 
