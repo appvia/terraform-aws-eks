@@ -9,7 +9,7 @@ locals {
   ## List of subnets to create the node groups on
   private_subnets_ids = local.create_network ? module.vpc[0].private_subnet_ids : var.private_subnet_ids
   ## Current AWS region
-  region = data.aws_region.current.name
+  region = data.aws_region.current.region
   ## Tags applied to all resources
   tags = merge(var.tags, { Provisioner = "Terraform" })
   ## The vpc id to use for the cluster
