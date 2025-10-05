@@ -32,13 +32,13 @@ locals {
 module "eks" {
   source = "../.."
 
-  access_entries                 = local.access_entries
-  cluster_enabled_log_types      = null
-  cluster_endpoint_public_access = true
-  cluster_name                   = "hub"
-  nat_gateway_mode               = "none"
-  private_subnet_netmask         = 24
-  public_subnet_netmask          = 24
-  tags                           = local.tags
-  vpc_cidr                       = "10.90.0.0/21"
+  access_entries            = local.access_entries
+  cluster_enabled_log_types = null
+  endpoint_public_access    = true
+  cluster_name              = "hub"
+  nat_gateway_mode          = "none"
+  private_subnet_netmask    = 24
+  public_subnet_netmask     = 24
+  tags                      = local.tags
+  vpc_cidr                  = "10.90.0.0/21"
 }

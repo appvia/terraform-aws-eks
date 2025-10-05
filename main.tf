@@ -13,18 +13,18 @@ resource "aws_iam_role" "argocd_cross_account_role" {
 # tfsec:ignore:aws-eks-no-public-cluster-access-to-cidr
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "20.33.1"
+  version = "21.3.1"
 
   access_entries                           = local.access_entries
   authentication_mode                      = "API"
-  cluster_enabled_log_types                = var.cluster_enabled_log_types
-  cluster_endpoint_private_access          = true
-  cluster_endpoint_public_access           = var.cluster_endpoint_public_access
-  cluster_endpoint_public_access_cidrs     = var.cluster_endpoint_public_access_cidrs
-  cluster_name                             = var.cluster_name
-  cluster_version                          = var.cluster_version
   enable_cluster_creator_admin_permissions = local.enable_cluster_creator_admin_permissions
+  enabled_log_types                        = var.cluster_enabled_log_types
+  endpoint_private_access                  = true
+  endpoint_public_access                   = var.endpoint_public_access
+  endpoint_public_access_cidrs             = var.endpoint_public_access_cidrs
   kms_key_administrators                   = var.kms_key_administrators
+  kubernetes_version                       = var.kubernetes_version
+  name                                     = var.cluster_name
   subnet_ids                               = local.private_subnets_ids
   tags                                     = local.tags
   vpc_id                                   = local.vpc_id
@@ -37,13 +37,13 @@ module "eks" {
   })
 
   ## Should we enable auto mode
-  cluster_compute_config = {
+  compute_config = {
     enabled    = true
     node_pools = var.node_pools
   }
 
   ## Additional Security Group Rules for the Cluster Security Group
-  cluster_security_group_additional_rules = merge({
+  security_group_additional_rules = merge({
     egress_nodes_ephemeral_ports_tcp = {
       description                = "To node 1025-65535"
       protocol                   = "tcp"
@@ -52,7 +52,7 @@ module "eks" {
       type                       = "egress"
       source_node_security_group = true
     }
-  }, var.cluster_security_group_additional_rules)
+  }, var.security_group_additional_rules)
 
   ## Additional Security Group Rules for the Node Security Group
   node_security_group_additional_rules = merge({

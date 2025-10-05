@@ -145,25 +145,25 @@ variable "cluster_enabled_log_types" {
   default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 }
 
-variable "cluster_endpoint_public_access" {
+variable "endpoint_public_access" {
   description = "Whether to enable public access to the EKS API server endpoint."
   type        = bool
   default     = true
 }
 
-variable "cluster_endpoint_public_access_cidrs" {
+variable "endpoint_public_access_cidrs" {
   description = "List of CIDR blocks which can access the Amazon EKS API server endpoint."
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }
 
-variable "cluster_security_group_additional_rules" {
+variable "security_group_additional_rules" {
   description = "List of additional security group rules to add to the cluster security group created. Set `source_node_security_group = true` inside rules to set the `node_security_group` as source."
   type        = any
   default     = {}
 }
 
-variable "cluster_version" {
+variable "kubernetes_version" {
   description = "Kubernetes version for the EKS cluster"
   type        = string
   default     = "1.32"
