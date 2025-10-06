@@ -2,7 +2,7 @@
 module "vpc" {
   count   = local.create_network ? 1 : 0
   source  = "appvia/network/aws"
-  version = "0.6.11"
+  version = "0.6.12"
 
   availability_zones     = var.availability_zones
   name                   = local.name
