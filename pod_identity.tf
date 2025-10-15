@@ -4,7 +4,7 @@
 module "pod_identity" {
   for_each = var.pod_identity
   source   = "terraform-aws-modules/eks-pod-identity/aws"
-  version  = "~> 1.4.0"
+  version  = "~> 2.1.0"
 
   name                     = each.value.name
   additional_policy_arns   = try(each.value.managed_policy_arns, {})
@@ -26,7 +26,7 @@ module "pod_identity" {
 module "aws_cert_manager_pod_identity" {
   count   = var.cert_manager.enabled ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  version = "~> 2.1.0"
 
   name                          = "cert-manager-${local.name}"
   attach_cert_manager_policy    = true
@@ -47,7 +47,7 @@ module "aws_cert_manager_pod_identity" {
 module "aws_external_dns_pod_identity" {
   count   = var.external_dns.enabled ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  version = "~> 2.1.0"
 
   name                          = "external-dns-${local.name}"
   tags                          = local.tags
@@ -68,7 +68,7 @@ module "aws_external_dns_pod_identity" {
 module "aws_argocd_pod_identity" {
   count   = var.argocd.enabled ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  version = "~> 2.1.0"
 
   attach_custom_policy      = true
   custom_policy_description = "Allow ArgoCD to assume role into spoke accounts"
@@ -102,7 +102,7 @@ module "aws_argocd_pod_identity" {
 module "aws_terranetes_pod_identity" {
   count   = var.terranetes.enabled ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  version = "~> 2.1.0"
 
   name                      = "terranetes-${local.name}"
   additional_policy_arns    = try(var.terranetes.managed_policy_arns, {})
@@ -124,7 +124,7 @@ module "aws_terranetes_pod_identity" {
 module "aws_external_secrets_pod_identity" {
   count   = var.external_secrets.enabled ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  version = "~> 2.1.0"
 
   name                                  = "external-secrets-${local.name}"
   attach_external_secrets_policy        = true
@@ -147,7 +147,7 @@ module "aws_external_secrets_pod_identity" {
 module "aws_ack_iam_pod_identity" {
   count   = var.aws_ack_iam.enabled ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  version = "~> 2.1.0"
 
   name                      = "ack-iam-${local.name}"
   additional_policy_arns    = try(var.aws_ack_iam.managed_policy_arns, {})
@@ -168,7 +168,7 @@ module "aws_ack_iam_pod_identity" {
 module "aws_cloudwatch_observability_pod_identity" {
   count   = var.cloudwatch_observability.enabled ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  version = "~> 2.1.0"
 
   attach_aws_cloudwatch_observability_policy = true
   name                                       = "cloudwatch-${local.name}"
