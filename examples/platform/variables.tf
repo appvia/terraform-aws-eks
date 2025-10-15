@@ -2,11 +2,13 @@
 variable "tags" {
   description = "The tags to apply to all resources"
   type        = map(string)
+  default     = {}
 }
 
 variable "sso_role_name" {
   description = "The SSO Administrator role ARN"
   type        = string
+  default     = "AWSReservedSSO_Administrator_fbb916977087a86f"
 }
 
 variable "hub_account_id" {
@@ -14,12 +16,6 @@ variable "hub_account_id" {
   type        = string
   default     = null
 }
-
-variable "cluster_path" {
-  description = "The name of the cluster"
-  type        = string
-}
-
 variable "private_subnet_netmask" {
   description = "The netmask for the private subnets"
   type        = number

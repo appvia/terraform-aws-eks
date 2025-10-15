@@ -13,21 +13,34 @@ resource "aws_iam_role" "argocd_cross_account_role" {
 # tfsec:ignore:aws-eks-no-public-cluster-access-to-cidr
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "21.3.1"
+  version = "21.4.0"
 
   access_entries                           = local.access_entries
+  addons                                   = var.eks_addons
   authentication_mode                      = "API"
-  enable_cluster_creator_admin_permissions = local.enable_cluster_creator_admin_permissions
+  create_auto_mode_iam_resources           = true
+  create_kms_key                           = var.create_kms_key
+  enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
+  enable_irsa                              = var.enable_irsa
   enabled_log_types                        = var.cluster_enabled_log_types
-  endpoint_private_access                  = true
-  endpoint_public_access                   = var.endpoint_public_access
+  endpoint_private_access                  = var.enable_private_access
+  endpoint_public_access                   = var.enable_public_access
   endpoint_public_access_cidrs             = var.endpoint_public_access_cidrs
   kms_key_administrators                   = var.kms_key_administrators
+  kms_key_description                      = format("KMS key for the %s EKS cluster", var.cluster_name)
+  kms_key_owners                           = [format("arn:aws:iam::%s:root", local.account_id)]
+  kms_key_service_users                    = var.kms_key_service_users
+  kms_key_users                            = var.kms_key_users
   kubernetes_version                       = var.kubernetes_version
   name                                     = var.cluster_name
-  subnet_ids                               = local.private_subnets_ids
+  subnet_ids                               = var.private_subnet_ids
   tags                                     = local.tags
-  vpc_id                                   = local.vpc_id
+  vpc_id                                   = var.vpc_id
+
+  # Attach additional IAM policies to the Karpenter node IAM role
+  node_iam_role_additional_policies = {
+    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  }
 
   # NOTE - if creating multiple security groups with this module, only tag the
   # security group that Karpenter should utilize with the following tag

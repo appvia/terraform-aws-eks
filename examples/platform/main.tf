@@ -1,23 +1,48 @@
 
 locals {
-  ## The cluster configuration
-  cluster = yamldecode(file(var.cluster_path))
   ## The cluster_name of the cluster
-  cluster_name = local.cluster.cluster_name
+  cluster_name = "dev"
   ## The cluster type
-  cluster_type = local.cluster.cluster_type
+  cluster_type = "standalone"
   ## The platform repository
-  platform_repository = local.cluster.platform_repository
+  platform_repository = "https://github.com/appvia/kubernetes-platform"
   ## The platform revision
-  platform_revision = local.cluster.platform_revision
+  platform_revision = "main"
   ## The tenant repository
-  tenant_repository = local.cluster.tenant_repository
+  tenant_repository = "https://github.com/appvia/kubernetes-platform"
   ## The tenant revision
-  tenant_revision = local.cluster.tenant_revision
+  tenant_revision = "main"
   ## The tenant path
-  tenant_path = local.cluster.tenant_path
-  ## Indicates if we install the platorm - we do for a hub or standalone cluster type
-  enable_platform = contains(["hub", "standalone"], local.cluster_type) ? true : false
+  tenant_path = "release/standalone-aws"
+}
+
+## Provision a network for the cluster
+module "network" {
+  source  = "appvia/network/aws"
+  version = "0.6.12"
+
+  availability_zones     = 3
+  name                   = local.cluster_name
+  private_subnet_netmask = 24
+  public_subnet_netmask  = 24
+  tags                   = local.tags
+  transit_gateway_id     = "tgw-0c5994aa363b1e132"
+  vpc_cidr               = "10.90.0.0/21"
+
+  transit_gateway_routes = {
+    private = "0.0.0.0/0"
+  }
+
+  private_subnet_tags = {
+    "karpenter.sh/discovery"                      = local.cluster_name
+    "kubernetes.io/cluster/${local.cluster_name}" = "owned"
+    "kubernetes.io/role/internal-elb"             = "1"
+  }
+
+  public_subnet_tags = {
+    "kubernetes.io/cluster/dev" = "owned"
+    "kubernetes.io/role/elb"    = "1"
+  }
 }
 
 ## Provision a EKS cluster for the hub
@@ -27,24 +52,25 @@ module "eks" {
   access_entries            = local.access_entries
   cluster_enabled_log_types = null
   cluster_name              = local.cluster_name
+  enable_private_access     = true
+  enable_public_access      = true
   hub_account_id            = var.hub_account_id
   nat_gateway_mode          = var.nat_gateway_mode
-  private_subnet_netmask    = var.private_subnet_netmask
-  public_subnet_netmask     = var.public_subnet_netmask
+  node_pools                = ["system"]
+  private_subnet_ids        = module.network.private_subnet_ids
   tags                      = local.tags
-  vpc_cidr                  = var.vpc_cidr
+  vpc_id                    = module.network.vpc_id
 }
 
 ## Provision and bootstrap the platform using an tenant repository
 module "platform" {
-  count  = local.enable_platform ? 1 : 0
   source = "../../modules/platform"
 
   ## Name of the cluster
   cluster_name = local.cluster_name
   # The type of cluster
   cluster_type = local.cluster_type
-  # Any rrepositories to be provisioned
+  # Any repositories to be provisioned
   repositories = var.argocd_repositories
   ## The platform repository
   platform_repository = local.platform_repository
