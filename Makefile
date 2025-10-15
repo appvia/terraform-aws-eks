@@ -163,3 +163,11 @@ clean:
 		echo "--> Removing $$dir"; \
 		rm -rf $$dir; \
 	done
+	$(MAKE) clean-lockfiles
+
+clean-lockfiles:
+	@echo "--> Removing terraform lock files"
+	@find . -type f -name "terraform.lock.hcl" 2>/dev/null | while read -r file; do \
+		echo "--> Removing $$file"; \
+		rm -f $$file; \
+	done
