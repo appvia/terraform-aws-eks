@@ -32,7 +32,7 @@ module "aws_cert_manager_pod_identity" {
   name                          = "cert-manager-${local.name}"
   description                   = "Pod identity for cert-manager for the ${local.name} cluster"
   attach_cert_manager_policy    = true
-  cert_manager_hosted_zone_arns = try(var.cert_manager.route53_zone_arns, [])
+  cert_manager_hosted_zone_arns = try(var.cert_manager.hosted_zone_arns, [])
   cert_manager_policy_name      = format("cert-manager-%s", local.name)
   tags                          = local.tags
 
@@ -58,7 +58,6 @@ module "aws_external_dns_pod_identity" {
   attach_external_dns_policy    = true
   external_dns_hosted_zone_arns = try(var.external_dns.hosted_zone_arns, [])
   external_dns_policy_name      = format("external-dns-%s", local.name)
-  use_name_prefix               = false
 
   # Pod Identity Associations
   associations = {
@@ -81,7 +80,6 @@ module "aws_argocd_pod_identity" {
   attach_custom_policy      = true
   custom_policy_description = "Allow ArgoCD to assume role into spoke accounts"
   tags                      = local.tags
-  use_name_prefix           = false
 
   policy_statements = [
     {
@@ -117,7 +115,6 @@ module "aws_terranetes_pod_identity" {
   custom_policy_description = "Provides the permisions for the terraform controller "
   permissions_boundary_arn  = try(var.terranetes.permissions_boundary_arn, null)
   tags                      = local.tags
-  use_name_prefix           = false
 
   # Pod Identity Associations
   associations = {
@@ -141,8 +138,7 @@ module "aws_external_secrets_pod_identity" {
   external_secrets_create_permission    = true
   external_secrets_secrets_manager_arns = try(var.external_secrets.secrets_manager_arns, [])
   external_secrets_ssm_parameter_arns   = try(var.external_secrets.ssm_parameter_arns, [])
-  external_dns_policy_name              = format("external-secrets-%s", local.name)
-  use_name_prefix                       = false
+  external_secrets_policy_name          = format("external-secrets-%s", local.name)
   tags                                  = local.tags
 
   # Pod Identity Associations
@@ -166,7 +162,6 @@ module "aws_ack_iam_pod_identity" {
   additional_policy_arns    = try(var.aws_ack_iam.managed_policy_arns, {})
   custom_policy_description = "AWS IAM Controllers for the ACK system"
   tags                      = local.tags
-  use_name_prefix           = false
 
   # Pod Identity Associations
   associations = {
@@ -188,7 +183,6 @@ module "aws_cloudwatch_observability_pod_identity" {
   description                                = "Pod identity for the CloudWatch Agent for the ${local.name} cluster"
   attach_aws_cloudwatch_observability_policy = true
   tags                                       = local.tags
-  use_name_prefix                            = false
 
   # Pod Identity Associations
   associations = {

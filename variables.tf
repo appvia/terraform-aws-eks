@@ -78,7 +78,7 @@ variable "external_dns" {
     ## The service account to deploy the External DNS platform to
     service_account = optional(string, "external-dns")
     ## The route53 zone ARNs to attach to the External DNS platform
-    route53_zone_arns = optional(list(string), [])
+    hosted_zone_arns = optional(list(string), [])
   })
   default = {}
 }
@@ -285,7 +285,7 @@ variable "cert_manager" {
     ## The service account to deploy the cert-manager platform to
     service_account = optional(string, "cert-manager")
     ## Route53 zone id to use for the cert-manager platform
-    route53_zone_arns = optional(list(string), [])
+    hosted_zone_arns = optional(list(string), [])
   })
   default = {}
 }
