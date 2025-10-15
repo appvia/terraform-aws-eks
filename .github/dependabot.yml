@@ -13,3 +13,7 @@ updates:
     directory: /examples/basic
     schedule:
       interval: weekly
+  - package-ecosystem: terraform
+    directory: /examples/platform
+    schedule:
+      interval: weekly
