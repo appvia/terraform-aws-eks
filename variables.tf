@@ -139,14 +139,81 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "eks_addons" {
+  description = "Map of EKS addons to enable"
+  type = map(object({
+    ## The name of the EKS addon
+    name = optional(string)
+    ## Indicates if we should deploy the EKS addon before the compute nodes
+    before_compute = optional(bool, false)
+    ## Indicates if we should use the most recent version of the EKS addon
+    most_recent = optional(bool, true)
+    ## The version of the EKS addon
+    addon_version = optional(string)
+    ## The configuration values for the EKS addon
+    configuration_values = optional(string)
+    ## The pod identity association for the EKS addon
+    pod_identity_association = optional(list(object({
+      ## The role ARN for the EKS addon pod identity association
+      role_arn = string
+      ## The service account for the EKS addon
+      service_account = string
+    })))
+    ## Indicates if we should preserve the EKS addon
+    preserve = optional(bool, true)
+    ## The resolve conflicts on create for the EKS addon
+    resolve_conflicts_on_create = optional(string, "NONE")
+    ## The resolve conflicts on update for the EKS addon
+    resolve_conflicts_on_update = optional(string, "OVERWRITE")
+    ## The service account role ARN for the EKS addon
+    service_account_role_arn = optional(string)
+    ## The timeouts for the EKS addon
+    timeouts = optional(object({
+      ## The timeout for the EKS addon create
+      create = optional(string)
+      ## The timeout for the EKS addon update
+      update = optional(string)
+      ## The timeout for the EKS addon delete
+      delete = optional(string)
+    }), {})
+    ## The tags for the EKS addon
+    tags = optional(map(string), {})
+  }))
+  default = null
+}
+
 variable "cluster_enabled_log_types" {
   description = "List of log types to enable for the EKS cluster."
   type        = list(string)
   default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 }
 
-variable "endpoint_public_access" {
+variable "create_kms_key" {
+  description = "Whether to create a KMS key for the EKS cluster."
+  type        = bool
+  default     = true
+}
+
+variable "enable_public_access" {
   description = "Whether to enable public access to the EKS API server endpoint."
+  type        = bool
+  default     = false
+}
+
+variable "enable_private_access" {
+  description = "Whether to enable private access to the EKS API server endpoint."
+  type        = bool
+  default     = true
+}
+
+variable "enable_cluster_creator_admin_permissions" {
+  description = "Whether to enable cluster creator admin permissions (else create access entries for the cluster creator)"
+  type        = bool
+  default     = false
+}
+
+variable "enable_irsa" {
+  description = "Whether to enable IRSA for the EKS cluster."
   type        = bool
   default     = true
 }
@@ -166,7 +233,7 @@ variable "security_group_additional_rules" {
 variable "kubernetes_version" {
   description = "Kubernetes version for the EKS cluster"
   type        = string
-  default     = "1.32"
+  default     = "1.34"
 }
 
 variable "node_pools" {
@@ -177,6 +244,18 @@ variable "node_pools" {
 
 variable "kms_key_administrators" {
   description = "A list of IAM ARNs for EKS key administrators. If no value is provided, the current caller identity is used to ensure at least one key admin is available."
+  type        = list(string)
+  default     = []
+}
+
+variable "kms_key_users" {
+  description = "A list of IAM ARNs for EKS key users."
+  type        = list(string)
+  default     = []
+}
+
+variable "kms_key_service_users" {
+  description = "A list of IAM ARNs for EKS key service users."
   type        = list(string)
   default     = []
 }
@@ -193,53 +272,19 @@ variable "node_security_group_additional_rules" {
   default     = {}
 }
 
-variable "private_subnet_netmask" {
-  description = "The netmask for the private subnets"
-  type        = number
-  default     = 24
-}
-
-variable "private_subnet_ids" {
-  description = "List of private subnet IDs, if you want to use existing subnets"
-  type        = list(string)
-  default     = null
-}
-
-variable "public_subnet_netmask" {
-  description = "The netmask for the public subnets"
-  type        = number
-  default     = 24
-}
-
 variable "tags" {
   description = "Tags to apply to all resources"
   type        = map(string)
 }
 
-variable "transit_gateway_id" {
-  description = "The ID of the transit gateway to use"
-  type        = string
-  default     = null
-}
-
-variable "transit_gateway_routes" {
-  description = "The routes to add to the transit gateway route table"
-  type        = map(string)
-  default = {
-    "private" = "10.0.0.0/8"
-  }
-}
-
-variable "vpc_cidr" {
-  description = "CIDR block for the Wayfinder VPC."
-  type        = string
-  default     = "10.0.0.0/21"
+variable "private_subnet_ids" {
+  description = "List of private subnet IDs, if you want to use existing subnets"
+  type        = list(string)
 }
 
 variable "vpc_id" {
   description = "ID of the VPC where the EKS cluster will be created"
   type        = string
-  default     = null
 }
 
 variable "cert_manager" {

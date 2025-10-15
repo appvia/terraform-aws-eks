@@ -5,7 +5,12 @@ locals {
   ## The SSO Administrator role ARN
   sso_role_name = var.sso_role_name
   ## Collection of tags to apply to resources
-  tags = merge(var.tags, {})
+  tags = merge(var.tags, {
+    GitRepo     = "https://github.com/appvia/terraform-aws-eks"
+    Owner       = "Engineering"
+    Product     = "EKS"
+    Environment = "Testing"
+  })
 
   ## EKS Access Entries for authentication
   access_entries = {

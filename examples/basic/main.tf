@@ -25,6 +25,35 @@ locals {
     Environment = "Production"
     Product     = "EKS"
     Owner       = "Engineering"
+    GitRepo     = "https://github.com/appvia/terraform-aws-eks"
+  }
+}
+
+## Provision a network for the cluster
+module "network" {
+  source  = "appvia/network/aws"
+  version = "0.6.12"
+
+  availability_zones     = 3
+  name                   = "dev"
+  private_subnet_netmask = 24
+  public_subnet_netmask  = 24
+  tags                   = local.tags
+  transit_gateway_id     = "tgw-0c5994aa363b1e132"
+  vpc_cidr               = "10.90.0.0/21"
+
+  transit_gateway_routes = {
+    private = "0.0.0.0/0"
+  }
+  private_subnet_tags = {
+    "karpenter.sh/discovery"          = "dev"
+    "kubernetes.io/cluster/dev"       = "owned"
+    "kubernetes.io/role/internal-elb" = "1"
+  }
+
+  public_subnet_tags = {
+    "kubernetes.io/cluster/dev" = "owned"
+    "kubernetes.io/role/elb"    = "1"
   }
 }
 
@@ -34,11 +63,11 @@ module "eks" {
 
   access_entries            = local.access_entries
   cluster_enabled_log_types = null
-  endpoint_public_access    = true
-  cluster_name              = "hub"
-  nat_gateway_mode          = "none"
-  private_subnet_netmask    = 24
-  public_subnet_netmask     = 24
+  cluster_name              = "dev"
+  enable_public_access      = true
+  enable_private_access     = true
+  node_pools                = ["system", "general-purpose"]
+  private_subnet_ids        = module.network.private_subnet_ids
   tags                      = local.tags
-  vpc_cidr                  = "10.90.0.0/21"
+  vpc_id                    = module.network.vpc_id
 }
