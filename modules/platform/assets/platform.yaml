@@ -1,0 +1,74 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bootstrap
+  namespace: argocd
+  labels:
+    app.kubernetes.io/managed-by: argocd
+    app.kubernetes.io/instance: platform
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+
+spec:
+  ## Name of the ArgoCD project to place the application
+  project: default
+
+  source:
+    repoURL: ${platform_repository}
+    path: kustomize/overlays/${cluster_type}
+    %{~ if platform_override != "" ~}
+    targetRevision: ${platform_override}
+    %{~ else ~}
+    targetRevision: ${platform_revision}
+    %{~ endif ~}
+    kustomize:
+      commonLabels:
+        app.kubernetes.io/managed-by: argocd
+      patches:
+        - target:
+            kind: ApplicationSet
+            name: system-platform
+          patch: |
+            - op: replace
+              path: /spec/generators/0/git/repoURL
+              value: ${tenant_repository}
+            %{~ if tenant_override != "" ~}
+            - op: replace
+              path: /spec/generators/0/git/revision
+              value: ${tenant_override}
+            %{~ else ~}
+            - op: replace
+              path: /spec/generators/0/git/revision
+              value: ${tenant_revision}
+            %{~ endif ~}
+            - op: replace
+              path: /spec/generators/0/git/files/0/path
+              value: ${tenant_repository_path}clusters/${cluster_name}.yaml
+            %{~ if platform_override != "" ~}
+            - op: replace
+              path: /spec/generators/0/git/values/override_platform
+              value: ${platform_override}
+            %{~ endif ~}
+            %{~ if tenant_override != "" ~}
+            - op: replace
+              path: /spec/generators/0/git/values/override_tenant
+              value: ${tenant_override}
+            %{~ endif ~}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 20
+      backoff:
+        duration: 20s
+        maxDuration: 5m
+    syncOptions:
+      - CreateNamespace=false
+      - ServerSideApply=true

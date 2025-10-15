@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: argocd-repository-${name}
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+type: Opaque
+stringData:
+  type: git
+  url: ${url}
+  %{~ if username != null }
+  username: ${username}
+  %{~ endif }
+  %{~ if password != null }
+  password: ${password}
+  %{~ endif }
+  %{~ if ssh_private_key != null }
+  ssh-private-key: ${ssh_private_key}
+  %{~ endif }
