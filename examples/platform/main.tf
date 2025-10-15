@@ -24,20 +24,15 @@ locals {
 module "eks" {
   source = "../../"
 
-  access_entries                 = local.access_entries
-  cluster_enabled_log_types      = null
-  cluster_endpoint_public_access = var.cluster_endpoint_public_access
-  cluster_name                   = local.cluster_name
-  eks_managed_node_groups        = {}
-  enable_auto_mode               = true
-  enable_argocd_pod_identity     = (local.cluster_type == "hub" ? true : false)
-  enable_nat_gateway             = var.enable_nat_gateway
-  hub_account_id                 = var.hub_account_id
-  nat_gateway_mode               = var.nat_gateway_mode
-  private_subnet_netmask         = var.private_subnet_netmask
-  public_subnet_netmask          = var.public_subnet_netmask
-  tags                           = local.tags
-  vpc_cidr                       = var.vpc_cidr
+  access_entries            = local.access_entries
+  cluster_enabled_log_types = null
+  cluster_name              = local.cluster_name
+  hub_account_id            = var.hub_account_id
+  nat_gateway_mode          = var.nat_gateway_mode
+  private_subnet_netmask    = var.private_subnet_netmask
+  public_subnet_netmask     = var.public_subnet_netmask
+  tags                      = local.tags
+  vpc_cidr                  = var.vpc_cidr
 }
 
 ## Provision and bootstrap the platform using an tenant repository
