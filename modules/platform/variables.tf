@@ -68,12 +68,12 @@ variable "argocd_version" {
 variable "cluster_type" {
   description = "The type of cluster we are onboarding i.e. hub or standalone"
   type        = string
+  default     = "standalone"
 }
 
 variable "cluster_name" {
   description = "The name of the cluster"
   type        = string
-  default     = null
 }
 
 variable "platform_repository" {
