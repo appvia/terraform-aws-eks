@@ -58,6 +58,7 @@ module "aws_external_dns_pod_identity" {
   attach_external_dns_policy    = true
   external_dns_hosted_zone_arns = try(var.external_dns.hosted_zone_arns, [])
   external_dns_policy_name      = format("external-dns-%s", local.name)
+  use_name_prefix               = false
 
   # Pod Identity Associations
   associations = {
@@ -116,6 +117,7 @@ module "aws_terranetes_pod_identity" {
   custom_policy_description = "Provides the permisions for the terraform controller "
   permissions_boundary_arn  = try(var.terranetes.permissions_boundary_arn, null)
   tags                      = local.tags
+  use_name_prefix           = false
 
   # Pod Identity Associations
   associations = {
@@ -140,6 +142,7 @@ module "aws_external_secrets_pod_identity" {
   external_secrets_secrets_manager_arns = try(var.external_secrets.secrets_manager_arns, [])
   external_secrets_ssm_parameter_arns   = try(var.external_secrets.ssm_parameter_arns, [])
   external_dns_policy_name              = format("external-secrets-%s", local.name)
+  use_name_prefix                       = false
   tags                                  = local.tags
 
   # Pod Identity Associations
@@ -163,6 +166,7 @@ module "aws_ack_iam_pod_identity" {
   additional_policy_arns    = try(var.aws_ack_iam.managed_policy_arns, {})
   custom_policy_description = "AWS IAM Controllers for the ACK system"
   tags                      = local.tags
+  use_name_prefix           = false
 
   # Pod Identity Associations
   associations = {
