@@ -16,7 +16,7 @@ module "eks" {
   version = "21.4.0"
 
   access_entries                           = local.access_entries
-  addons                                   = var.eks_addons
+  addons                                   = var.addons
   authentication_mode                      = "API"
   create_auto_mode_iam_resources           = true
   create_kms_key                           = var.create_kms_key

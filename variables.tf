@@ -21,6 +21,49 @@ variable "access_entries" {
   default = null
 }
 
+variable "addons" {
+  description = "Map of EKS addons to enable"
+  type = map(object({
+    ## The name of the EKS addon
+    name = optional(string)
+    ## Indicates if we should deploy the EKS addon before the compute nodes
+    before_compute = optional(bool, false)
+    ## Indicates if we should use the most recent version of the EKS addon
+    most_recent = optional(bool, true)
+    ## The version of the EKS addon
+    addon_version = optional(string)
+    ## The configuration values for the EKS addon
+    configuration_values = optional(string)
+    ## The pod identity association for the EKS addon
+    pod_identity_association = optional(list(object({
+      ## The role ARN for the EKS addon pod identity association
+      role_arn = string
+      ## The service account for the EKS addon
+      service_account = string
+    })))
+    ## Indicates if we should preserve the EKS addon
+    preserve = optional(bool, true)
+    ## The resolve conflicts on create for the EKS addon
+    resolve_conflicts_on_create = optional(string, "NONE")
+    ## The resolve conflicts on update for the EKS addon
+    resolve_conflicts_on_update = optional(string, "OVERWRITE")
+    ## The service account role ARN for the EKS addon
+    service_account_role_arn = optional(string)
+    ## The timeouts for the EKS addon
+    timeouts = optional(object({
+      ## The timeout for the EKS addon create
+      create = optional(string)
+      ## The timeout for the EKS addon update
+      update = optional(string)
+      ## The timeout for the EKS addon delete
+      delete = optional(string)
+    }), {})
+    ## The tags for the EKS addon
+    tags = optional(map(string), {})
+  }))
+  default = null
+}
+
 variable "pod_identity" {
   description = "The pod identity configuration"
   type = map(object({
@@ -131,49 +174,6 @@ variable "cloudwatch_observability" {
 variable "cluster_name" {
   description = "Name of the Kubenetes cluster"
   type        = string
-}
-
-variable "eks_addons" {
-  description = "Map of EKS addons to enable"
-  type = map(object({
-    ## The name of the EKS addon
-    name = optional(string)
-    ## Indicates if we should deploy the EKS addon before the compute nodes
-    before_compute = optional(bool, false)
-    ## Indicates if we should use the most recent version of the EKS addon
-    most_recent = optional(bool, true)
-    ## The version of the EKS addon
-    addon_version = optional(string)
-    ## The configuration values for the EKS addon
-    configuration_values = optional(string)
-    ## The pod identity association for the EKS addon
-    pod_identity_association = optional(list(object({
-      ## The role ARN for the EKS addon pod identity association
-      role_arn = string
-      ## The service account for the EKS addon
-      service_account = string
-    })))
-    ## Indicates if we should preserve the EKS addon
-    preserve = optional(bool, true)
-    ## The resolve conflicts on create for the EKS addon
-    resolve_conflicts_on_create = optional(string, "NONE")
-    ## The resolve conflicts on update for the EKS addon
-    resolve_conflicts_on_update = optional(string, "OVERWRITE")
-    ## The service account role ARN for the EKS addon
-    service_account_role_arn = optional(string)
-    ## The timeouts for the EKS addon
-    timeouts = optional(object({
-      ## The timeout for the EKS addon create
-      create = optional(string)
-      ## The timeout for the EKS addon update
-      update = optional(string)
-      ## The timeout for the EKS addon delete
-      delete = optional(string)
-    }), {})
-    ## The tags for the EKS addon
-    tags = optional(map(string), {})
-  }))
-  default = null
 }
 
 variable "cluster_enabled_log_types" {
