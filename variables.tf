@@ -111,10 +111,14 @@ variable "pod_identity" {
     name = optional(string, null)
     ## Additional policy statements to attach to the pod identity role
     policy_statements = optional(list(object({
-      sid       = optional(string, null)
-      actions   = optional(list(string), [])
+      ## The statement ID
+      sid = optional(string, null)
+      ## The actions to allow
+      actions = optional(list(string), [])
+      ## The resources to allow
       resources = optional(list(string), [])
-      effect    = optional(string, null)
+      ## The effect to allow
+      effect = optional(string, null)
     })), [])
   }))
   default = {}
