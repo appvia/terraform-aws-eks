@@ -30,6 +30,8 @@ variable "ebs_csi_driver" {
     kms_key_arns = optional(list(string), [])
     ## The version of the EBS CSI driver
     version = optional(string, "v1.51.0-eksbuild.1")
+    ## The service account to deploy the EBS CSI driver to
+    service_account = optional(string, "ebs-csi-controller-sa")
   })
   default = {}
 }
@@ -41,6 +43,8 @@ variable "efs_csi_driver" {
     enabled = optional(bool, false)
     ## The version of the EFS CSI driver
     version = optional(string, "v1.6.0-eksbuild.1")
+    ## The service account to deploy the EFS CSI driver to
+    service_account = optional(string, "efs-csi-controller-sa")
   })
   default = {}
 }
