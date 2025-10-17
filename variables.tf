@@ -21,6 +21,19 @@ variable "access_entries" {
   default = null
 }
 
+variable "ebs_csi_driver" {
+  description = "The EBS CSI driver configuration"
+  type = object({
+    ## Indicates if we should enable the EBS CSI driver
+    enabled = optional(bool, false)
+    ## The KMS key ARNs to allow the EBS CSI driver to manage encrypted volumes
+    kms_key_arns = optional(list(string), [])
+    ## The version of the EBS CSI driver
+    version = optional(string, "v1.51.0-eksbuild.1")
+  })
+  default = {}
+}
+
 variable "addons" {
   description = "Map of EKS addons to enable"
   type = map(object({
