@@ -160,7 +160,7 @@ module "aws_ack_iam_pod_identity" {
   name                      = "ack-iam-${local.name}"
   description               = "Pod identity for the AWS ACK IAM platform for the ${local.name} cluster"
   additional_policy_arns    = try(var.aws_ack_iam.managed_policy_arns, {})
-  custom_policy_description = "AWS IAM Controllers for the ACK system"
+  custom_policy_description = "AWS IAM Controllers for the ACK system for the ${local.name} cluster"
   tags                      = local.tags
 
   # Pod Identity Associations
