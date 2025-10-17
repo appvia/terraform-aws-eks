@@ -34,6 +34,17 @@ variable "ebs_csi_driver" {
   default = {}
 }
 
+variable "efs_csi_driver" {
+  description = "The EFS CSI driver configuration"
+  type = object({
+    ## Indicates if we should enable the EFS CSI driver
+    enabled = optional(bool, false)
+    ## The version of the EFS CSI driver
+    version = optional(string, "v1.6.0-eksbuild.1")
+  })
+  default = {}
+}
+
 variable "addons" {
   description = "Map of EKS addons to enable"
   type = map(object({

@@ -460,6 +460,7 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | <a name="input_cluster_enabled_log_types"></a> [cluster\_enabled\_log\_types](#input\_cluster\_enabled\_log\_types) | List of log types to enable for the EKS cluster. | `list(string)` | <pre>[<br/>  "api",<br/>  "audit",<br/>  "authenticator",<br/>  "controllerManager",<br/>  "scheduler"<br/>]</pre> | no |
 | <a name="input_create_kms_key"></a> [create\_kms\_key](#input\_create\_kms\_key) | Whether to create a KMS key for the EKS cluster. | `bool` | `true` | no |
 | <a name="input_ebs_csi_driver"></a> [ebs\_csi\_driver](#input\_ebs\_csi\_driver) | The EBS CSI driver configuration | <pre>object({<br/>    ## Indicates if we should enable the EBS CSI driver<br/>    enabled = optional(bool, false)<br/>    ## The KMS key ARNs to allow the EBS CSI driver to manage encrypted volumes<br/>    kms_key_arns = optional(list(string), [])<br/>    ## The version of the EBS CSI driver<br/>    version = optional(string, "v1.51.0-eksbuild.1")<br/>  })</pre> | `{}` | no |
+| <a name="input_efs_csi_driver"></a> [efs\_csi\_driver](#input\_efs\_csi\_driver) | The EFS CSI driver configuration | <pre>object({<br/>    ## Indicates if we should enable the EFS CSI driver<br/>    enabled = optional(bool, false)<br/>    ## The version of the EFS CSI driver<br/>    version = optional(string, "v1.6.0-eksbuild.1")<br/>  })</pre> | `{}` | no |
 | <a name="input_enable_cluster_creator_admin_permissions"></a> [enable\_cluster\_creator\_admin\_permissions](#input\_enable\_cluster\_creator\_admin\_permissions) | Whether to enable cluster creator admin permissions (else create access entries for the cluster creator) | `bool` | `false` | no |
 | <a name="input_enable_irsa"></a> [enable\_irsa](#input\_enable\_irsa) | Whether to enable IRSA for the EKS cluster. | `bool` | `true` | no |
 | <a name="input_enable_private_access"></a> [enable\_private\_access](#input\_enable\_private\_access) | Whether to enable private access to the EKS API server endpoint. | `bool` | `true` | no |
@@ -490,5 +491,7 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | The name of the Wayfinder EKS cluster. |
 | <a name="output_cluster_oidc_provider_arn"></a> [cluster\_oidc\_provider\_arn](#output\_cluster\_oidc\_provider\_arn) | The ARN of the OIDC provider for the Wayfinder EKS cluster |
 | <a name="output_cross_account_role_arn"></a> [cross\_account\_role\_arn](#output\_cross\_account\_role\_arn) | The cross account arn when we are using a hub |
+| <a name="output_ebs_csi_driver_pod_identity_arn"></a> [ebs\_csi\_driver\_pod\_identity\_arn](#output\_ebs\_csi\_driver\_pod\_identity\_arn) | The ARN of the EBS CSI driver pod identity |
+| <a name="output_efs_csi_driver_pod_identity_arn"></a> [efs\_csi\_driver\_pod\_identity\_arn](#output\_efs\_csi\_driver\_pod\_identity\_arn) | The ARN of the EFS CSI driver pod identity |
 | <a name="output_region"></a> [region](#output\_region) | The AWS region in which the cluster is provisioned |
 <!-- END_TF_DOCS -->

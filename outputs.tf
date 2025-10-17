@@ -32,3 +32,13 @@ output "region" {
   description = "The AWS region in which the cluster is provisioned"
   value       = local.region
 }
+
+output "ebs_csi_driver_pod_identity_arn" {
+  description = "The ARN of the EBS CSI driver pod identity"
+  value       = local.enable_ebs_csi_driver ? module.aws_ebs_csi_pod_identity[0].iam_role_arn : null
+}
+
+output "efs_csi_driver_pod_identity_arn" {
+  description = "The ARN of the EFS CSI driver pod identity"
+  value       = local.enable_efs_csi_driver ? module.aws_efs_csi_pod_identity[0].iam_role_arn : null
+}
