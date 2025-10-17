@@ -53,7 +53,7 @@ module "eks" {
   ## Additional Security Group Rules for the Cluster Security Group
   security_group_additional_rules = merge({
     egress_nodes_ephemeral_ports_tcp = {
-      description                = "To node 1025-65535"
+      description                = "To node 1025-65535 for cluster ${var.cluster_name}"
       protocol                   = "tcp"
       from_port                  = 1025
       to_port                    = 65535
