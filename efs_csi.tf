@@ -11,14 +11,14 @@ locals {
 
 ## Attach the EFS CSI driver policy to the EKS cluster
 module "aws_efs_csi_pod_identity" {
-  count   = local.enable_ebs_csi_driver ? 1 : 0
+  count   = local.enable_efs_csi_driver ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.2.0"
 
   name                      = "${local.efs_csi_policy_name_prefix}-pod-identity"
   attach_aws_efs_csi_policy = true
   aws_efs_csi_policy_name   = local.efs_csi_policy_name_prefix
-  description               = "Pod identity for the EBS CSI driver for the ${var.cluster_name} cluster"
+  description               = "Pod identity for the EFS CSI driver for the ${var.cluster_name} cluster"
   tags                      = local.tags
 }
 
