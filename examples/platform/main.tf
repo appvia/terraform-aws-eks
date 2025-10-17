@@ -55,7 +55,6 @@ module "eks" {
   enable_private_access     = true
   enable_public_access      = true
   hub_account_id            = var.hub_account_id
-  nat_gateway_mode          = var.nat_gateway_mode
   node_pools                = ["system"]
   private_subnet_ids        = module.network.private_subnet_ids
   tags                      = local.tags
