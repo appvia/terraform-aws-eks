@@ -37,11 +37,6 @@ module "eks" {
   tags                                     = local.tags
   vpc_id                                   = var.vpc_id
 
-  # Attach additional IAM policies to the Karpenter node IAM role
-  node_iam_role_additional_policies = {
-    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  }
-
   # NOTE - if creating multiple security groups with this module, only tag the
   # security group that Karpenter should utilize with the following tag
   # (i.e. - at most, only one security group should have this tag in your account)
@@ -70,7 +65,7 @@ module "eks" {
   ## Additional Security Group Rules for the Node Security Group
   node_security_group_additional_rules = merge({
     ingress_self_all = {
-      description = "Node to node all ports/protocols"
+      description = "Node to node all ports/protocols for cluster ${var.cluster_name}"
       protocol    = "-1"
       from_port   = 0
       to_port     = 0
@@ -78,7 +73,7 @@ module "eks" {
       self        = true
     }
     allow_ingress_10080 = {
-      description                   = "Control plane access 10080"
+      description                   = "Control plane access 10080 for cluster ${var.cluster_name}"
       protocol                      = "tcp"
       from_port                     = 10080
       to_port                       = 10080
@@ -86,7 +81,7 @@ module "eks" {
       source_cluster_security_group = true
     }
     allow_ingress_10443 = {
-      description                   = "Control plane access 10443"
+      description                   = "Control plane access 10443 for cluster ${var.cluster_name}"
       protocol                      = "tcp"
       from_port                     = 10443
       to_port                       = 10443
@@ -94,7 +89,7 @@ module "eks" {
       source_cluster_security_group = true
     }
     egress_all = {
-      description      = "Node all egress"
+      description      = "Node all egress for cluster ${var.cluster_name}"
       protocol         = "-1"
       from_port        = 0
       to_port          = 0
