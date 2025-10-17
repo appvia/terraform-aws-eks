@@ -2,8 +2,6 @@
 data "aws_caller_identity" "current" {}
 ## Data source for the current AWS region
 data "aws_region" "current" {}
-## Data source for the current AWS partition
-data "aws_partition" "current" {}
 
 ## Argocd assume role policy
 data "aws_iam_policy_document" "argocd_cross_account_role_policy" {

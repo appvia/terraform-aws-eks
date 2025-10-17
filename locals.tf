@@ -6,8 +6,6 @@ locals {
   name = var.cluster_name
   ## Current AWS region
   region = data.aws_region.current.region
-  ## Current AWS partition
-  partition = data.aws_partition.current.partition
   ## Tags applied to all resources
   tags = merge(var.tags, { Provisioner = "Terraform" })
   ## Indicates if we should enable cross account role
