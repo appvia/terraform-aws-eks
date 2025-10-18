@@ -74,7 +74,7 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | <a name="input_argocd_helm_repository"></a> [argocd\_helm\_repository](#input\_argocd\_helm\_repository) | The URL of the ArgoCD Helm repository | `string` | `"https://argoproj.github.io/argo-helm"` | no |
 | <a name="input_argocd_namespace"></a> [argocd\_namespace](#input\_argocd\_namespace) | The namespace to install ArgoCD | `string` | `"argocd"` | no |
 | <a name="input_argocd_values"></a> [argocd\_values](#input\_argocd\_values) | Additional values to add to the argocd Helm chart | `list(string)` | `[]` | no |
-| <a name="input_argocd_version"></a> [argocd\_version](#input\_argocd\_version) | Version of ArgoCD Helm chart to install | `string` | `"7.8.5"` | no |
+| <a name="input_argocd_version"></a> [argocd\_version](#input\_argocd\_version) | Version of ArgoCD Helm chart to install | `string` | `"9.0.0"` | no |
 | <a name="input_cluster_type"></a> [cluster\_type](#input\_cluster\_type) | The type of cluster we are onboarding i.e. hub or standalone | `string` | `"standalone"` | no |
 | <a name="input_platform_repository"></a> [platform\_repository](#input\_platform\_repository) | The URL for the platform repository | `string` | `"https://github.com/gambol99/kubernetes-platform"` | no |
 | <a name="input_platform_revision"></a> [platform\_revision](#input\_platform\_revision) | The revision of the platform repository | `string` | `"HEAD"` | no |
