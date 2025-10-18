@@ -83,7 +83,7 @@ variable "addons" {
       create = optional(string, "10m")
       ## The timeout for the EKS addon update
       update = optional(string, "10m")
-      /// The timeout for the EKS addon delete
+      ## The timeout for the EKS addon delete
       delete = optional(string, "10m")
     }), {})
     ## The tags for the EKS addon
@@ -153,7 +153,7 @@ variable "external_dns" {
     ## The service account to deploy the External DNS platform to
     service_account = optional(string, "external-dns")
     ## The route53 zone ARNs to attach to the External DNS platform
-    hosted_zone_arns = optional(list(string), [])
+    hosted_zone_arns = optional(list(string), ["arn:aws:route53:::hostedzone/*]"])
   })
   default = {}
 }
@@ -168,9 +168,9 @@ variable "external_secrets" {
     ## The service account to deploy the External Secrets platform to
     service_account = optional(string, "external-secrets")
     ## The secrets manager ARNs to attach to the External Secrets platform
-    secrets_manager_arns = optional(list(string), ["arn:aws:secretsmanager:*:*"])
+    secrets_manager_arns = optional(list(string), ["arn:aws:secretsmanager:::secret/*"])
     ## The SSM parameter ARNs to attach to the External Secrets platform
-    ssm_parameter_arns = optional(list(string), ["arn:aws:ssm:*:*:parameter/eks/*"])
+    ssm_parameter_arns = optional(list(string), ["arn:aws:ssm:::parameter/eks/*"])
   })
   default = {}
 }
@@ -317,7 +317,7 @@ variable "cert_manager" {
     ## The service account to deploy the cert-manager platform to
     service_account = optional(string, "cert-manager")
     ## Route53 zone id to use for the cert-manager platform
-    hosted_zone_arns = optional(list(string), [])
+    hosted_zone_arns = optional(list(string), ["arn:aws:route53:::hostedzone/*"])
   })
   default = {}
 }
