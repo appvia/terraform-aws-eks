@@ -2,7 +2,7 @@ variable "access_entries" {
   description = "Map of access entries to add to the cluster. This is required if you use a different IAM Role for Terraform Plan actions."
   type = map(object({
     ## The list of kubernetes groups to associate the principal with
-    kubernetes_groups = optional(list(string))
+    kubernetes_groups = optional(list(string), [])
     ## The list of kubernetes users to associate the principal with
     principal_arn = string
     ## The list of kubernetes users to associate the principal with
@@ -12,9 +12,9 @@ variable "access_entries" {
       ## The access scope for the policy i.e. cluster or namespace
       access_scope = object({
         ## The namespaces to apply the policy to
-        namespaces = optional(list(string))
+        namespaces = optional(list(string), [])
         ## The type of access scope i.e. cluster or namespace
-        type = string
+        type = optional(string, "cluster")
       })
     })))
   }))
@@ -72,19 +72,19 @@ variable "addons" {
     ## Indicates if we should preserve the EKS addon
     preserve = optional(bool, true)
     ## The resolve conflicts on create for the EKS addon
-    resolve_conflicts_on_create = optional(string, "NONE")
+    resolve_conflicts_on_create = optional(string, "OVERWRITE")
     ## The resolve conflicts on update for the EKS addon
     resolve_conflicts_on_update = optional(string, "OVERWRITE")
     ## The service account role ARN for the EKS addon
-    service_account_role_arn = optional(string)
+    service_account_role_arn = optional(string, null)
     ## The timeouts for the EKS addon
     timeouts = optional(object({
       ## The timeout for the EKS addon create
-      create = optional(string)
+      create = optional(string, "10m")
       ## The timeout for the EKS addon update
-      update = optional(string)
-      ## The timeout for the EKS addon delete
-      delete = optional(string)
+      update = optional(string, "10m")
+      /// The timeout for the EKS addon delete
+      delete = optional(string, "10m")
     }), {})
     ## The tags for the EKS addon
     tags = optional(map(string), {})

@@ -1,7 +1,7 @@
 
 locals {
   ## Indicates if we should attach the EBS CSI driver policy to the EKS cluster
-  enable_ebs_csi_driver = try(var.ebs_csi_driver.enabled, false) ? true : false
+  enable_ebs_csi_driver = try(var.ebs_csi_driver.enable, false) ? true : false
   ## The name of the EBS CSI driver policy
   ebs_csi_policy_name_prefix = "${var.cluster_name}-ebs-csi-driver"
 }

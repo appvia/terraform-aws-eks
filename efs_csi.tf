@@ -4,7 +4,7 @@
 
 locals {
   ## Indicates if we should enable the EFS CSI driver
-  enable_efs_csi_driver = try(var.efs_csi_driver.enabled, false) ? true : false
+  enable_efs_csi_driver = try(var.efs_csi_driver.enable, false) ? true : false
   ## The name of the EFS CSI driver policy
   efs_csi_policy_name_prefix = "${var.cluster_name}-efs-csi-driver"
 }

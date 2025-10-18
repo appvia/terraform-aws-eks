@@ -25,7 +25,7 @@ module "pod_identity" {
 
 ## Provision the pod identity for cert-manager in the hub cluster
 module "aws_cert_manager_pod_identity" {
-  count   = var.cert_manager.enabled ? 1 : 0
+  count   = var.cert_manager.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.2.0"
 
@@ -48,7 +48,7 @@ module "aws_cert_manager_pod_identity" {
 
 ## Provision the pod identity for external dns
 module "aws_external_dns_pod_identity" {
-  count   = var.external_dns.enabled ? 1 : 0
+  count   = var.external_dns.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.2.0"
 
@@ -71,7 +71,7 @@ module "aws_external_dns_pod_identity" {
 
 ## Provision the pod identity for argocd in the hub cluster
 module "aws_argocd_pod_identity" {
-  count   = var.argocd.enabled ? 1 : 0
+  count   = var.argocd.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.2.0"
 
@@ -105,7 +105,7 @@ module "aws_argocd_pod_identity" {
 
 ## Provision the pod identity for the Terranetes platform
 module "aws_terranetes_pod_identity" {
-  count   = var.terranetes.enabled ? 1 : 0
+  count   = var.terranetes.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.2.0"
 
@@ -128,7 +128,7 @@ module "aws_terranetes_pod_identity" {
 
 ## Provision External secrets pod identity
 module "aws_external_secrets_pod_identity" {
-  count   = var.external_secrets.enabled ? 1 : 0
+  count   = var.external_secrets.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.2.0"
 
@@ -153,7 +153,7 @@ module "aws_external_secrets_pod_identity" {
 
 ## Provision AWS Awk IAM Controllers pod identity
 module "aws_ack_iam_pod_identity" {
-  count   = var.aws_ack_iam.enabled ? 1 : 0
+ count   = var.aws_ack_iam.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.2.0"
 
@@ -175,7 +175,7 @@ module "aws_ack_iam_pod_identity" {
 
 ## Provision the pod identity for the CloudWatch Agent
 module "aws_cloudwatch_observability_pod_identity" {
-  count   = var.cloudwatch_observability.enabled ? 1 : 0
+  count   = var.cloudwatch_observability.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.2.0"
 
