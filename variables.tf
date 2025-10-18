@@ -251,7 +251,7 @@ variable "endpoint_public_access_cidrs" {
 }
 
 variable "security_group_additional_rules" {
-  description = "List of additional security group rules to add to the cluster security group created. Set `source_node_security_group = true` inside rules to set the `node_security_group` as source."
+  description = "List of additional security group rules to add to the cluster security group created"
   type        = any
   default     = {}
 }
