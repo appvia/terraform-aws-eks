@@ -153,7 +153,7 @@ module "aws_external_secrets_pod_identity" {
 
 ## Provision AWS Awk IAM Controllers pod identity
 module "aws_ack_iam_pod_identity" {
- count   = var.aws_ack_iam.enable ? 1 : 0
+  count   = var.aws_ack_iam.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.2.0"
 
