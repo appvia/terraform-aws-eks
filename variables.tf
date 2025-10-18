@@ -25,7 +25,7 @@ variable "ebs_csi_driver" {
   description = "The EBS CSI driver configuration"
   type = object({
     ## Indicates if we should enable the EBS CSI driver
-    enabled = optional(bool, false)
+    enable = optional(bool, false)
     ## The KMS key ARNs to allow the EBS CSI driver to manage encrypted volumes
     kms_key_arns = optional(list(string), [])
     ## The version of the EBS CSI driver
@@ -40,7 +40,7 @@ variable "efs_csi_driver" {
   description = "The EFS CSI driver configuration"
   type = object({
     ## Indicates if we should enable the EFS CSI driver
-    enabled = optional(bool, false)
+    enable = optional(bool, false)
     ## The version of the EFS CSI driver
     version = optional(string, "v1.6.0-eksbuild.1")
     ## The service account to deploy the EFS CSI driver to
@@ -128,7 +128,7 @@ variable "terranetes" {
   description = "The Terranetes platform configuration"
   type = object({
     ## Indicates if we should enable the Terranetes platform
-    enabled = optional(bool, false)
+    enable = optional(bool, false)
     ## The namespace to deploy the Terranetes platform to
     namespace = optional(string, "terraform-system")
     ## The service account to deploy the Terranetes platform to
@@ -147,7 +147,7 @@ variable "external_dns" {
   description = "The External DNS configuration"
   type = object({
     ## Indicates if we should enable the External DNS platform
-    enabled = optional(bool, false)
+    enable = optional(bool, false)
     ## The namespace to deploy the External DNS platform to
     namespace = optional(string, "external-dns")
     ## The service account to deploy the External DNS platform to
@@ -162,7 +162,7 @@ variable "external_secrets" {
   description = "The External Secrets configuration"
   type = object({
     ## Indicates if we should enable the External Secrets platform
-    enabled = optional(bool, false)
+    enable = optional(bool, false)
     ## The namespace to deploy the External Secrets platform to
     namespace = optional(string, "external-secrets")
     ## The service account to deploy the External Secrets platform to
@@ -179,7 +179,7 @@ variable "aws_ack_iam" {
   description = "The AWS ACK IAM configuration"
   type = object({
     ## Indicates if we should enable the AWS ACK IAM platform
-    enabled = optional(bool, false)
+    enable = optional(bool, false)
     ## The namespace to deploy the AWS ACK IAM platform to
     namespace = optional(string, "ack-system")
     ## The service account to deploy the AWS ACK IAM platform to
@@ -194,7 +194,7 @@ variable "cloudwatch_observability" {
   description = "The CloudWatch Observability configuration"
   type = object({
     ## Indicates if we should enable the CloudWatch Observability platform
-    enabled = optional(bool, false)
+    enable = optional(bool, false)
     ## The namespace to deploy the CloudWatch Observability platform to
     namespace = optional(string, "cloudwatch-observability")
     ## The service account to deploy the CloudWatch Observability platform to
@@ -311,7 +311,7 @@ variable "cert_manager" {
   description = "The cert-manager configuration"
   type = object({
     ## Indicates if we should enable the cert-manager platform
-    enabled = optional(bool, false)
+    enable = optional(bool, false)
     ## The namespace to deploy the cert-manager platform to
     namespace = optional(string, "cert-manager")
     ## The service account to deploy the cert-manager platform to
@@ -326,7 +326,7 @@ variable "argocd" {
   description = "The ArgoCD configuration"
   type = object({
     ## Indicates if we should enable the ArgoCD platform
-    enabled = optional(bool, false)
+    enable = optional(bool, false)
     ## The namespace to deploy the ArgoCD platform to
     namespace = optional(string, "argocd")
     ## The service account to deploy the ArgoCD platform to
