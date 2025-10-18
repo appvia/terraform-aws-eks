@@ -153,7 +153,7 @@ variable "external_dns" {
     ## The service account to deploy the External DNS platform to
     service_account = optional(string, "external-dns")
     ## The route53 zone ARNs to attach to the External DNS platform
-    hosted_zone_arns = optional(list(string), ["arn:aws:route53:::hostedzone/*]"])
+    hosted_zone_arns = optional(list(string), ["arn:aws:route53:::hostedzone/*"])
   })
   default = {}
 }
