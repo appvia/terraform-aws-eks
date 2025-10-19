@@ -203,6 +203,58 @@ variable "cloudwatch_observability" {
   default = {}
 }
 
+variable "kubecosts_agent" {
+  description = "The Kubecost Agent configuration"
+  type = object({
+    ## Indicates if we should enable the Kubecost Agent platform
+    enable = optional(bool, false)
+    ## The namespace to deploy the Kubecost Agent platform to
+    namespace = optional(string, "kubecost")
+    ## The service account to deploy the Kubecost Agent platform to
+    service_account = optional(string, "kubecost-agent")
+    ## The ARN of the federated bucket to use for the Kubecost Agent platform
+    federated_bucket_arn = string
+  })
+  default = null
+}
+
+variable "kubecosts" {
+  description = "The Kubecost configuration"
+  type = object({
+    ## Indicates if we should enable the Kubecost platform
+    enable = optional(bool, false)
+    ## The namespace to deploy the Kubecost platform to
+    namespace = optional(string, "kubecost")
+    ## The service account to deploy the Kubecost platform to
+    service_account = optional(string, "kubecost")
+    ## Fedarate storage configuration
+    federated_storage = optional(object({
+      ## Indicates if we should create the federated bucket
+      create_bucket = optional(bool, false)
+      ## KMS key ARN to use for the federated bucket
+      kms_key_arn = optional(string, null)
+      ## The ARN of the federated bucket to use for the Kubecost platform
+      federated_bucket_arn = optional(string, null)
+      ## List of principals to allowed to write to the federated bucket
+      allowed_principals = optional(list(string), [])
+    }), {})
+    ## Cloud Costs feature 
+    cloud_costs = optional(object({
+      ## Indicates if we should enable cloud costs via Athena
+      enable = optional(bool, false)
+      ## The ARN of the S3 bucket for Cost and Usage Report (CUR) data
+      cur_bucket_arn = optional(string, null)
+      ## The ARN of the S3 bucket for Athena query results
+      athena_bucket_arn = optional(string, null)
+      ## The name of the Athena database for CUR data
+      athena_database_name = optional(string, null)
+      ## The ARN of the Athena table for CUR data
+      athena_table_name = optional(string, null)
+    }), {})
+  })
+  default = null
+}
+
 variable "cluster_name" {
   description = "Name of the Kubenetes cluster"
   type        = string

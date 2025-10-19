@@ -16,41 +16,6 @@ variable "hub_account_id" {
   type        = string
   default     = null
 }
-variable "private_subnet_netmask" {
-  description = "The netmask for the private subnets"
-  type        = number
-  default     = 24
-}
-
-variable "public_subnet_netmask" {
-  description = "The netmask for the public subnets"
-  type        = number
-  default     = 24
-}
-
-variable "vpc_cidr" {
-  description = "The CIDR block for the VPC"
-  type        = string
-  default     = "10.90.0.0/16"
-}
-
-variable "enable_nat_gateway" {
-  description = "Enable the NAT gateway"
-  type        = bool
-  default     = true
-}
-
-variable "nat_gateway_mode" {
-  description = "The NAT gateway mode"
-  type        = string
-  default     = "single_az"
-}
-
-variable "cluster_endpoint_public_access" {
-  description = "The public access to the cluster endpoint"
-  type        = bool
-  default     = true
-}
 
 variable "argocd_repositories" {
   description = "A collection of repository secrets to add to the argocd namespace"

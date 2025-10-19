@@ -41,13 +41,7 @@ This module provides a production-ready EKS cluster with integrated platform ser
 - **Terranetes**: Terraform-as-a-Service platform
 - **AWS ACK IAM**: AWS Controllers for Kubernetes
 - **CloudWatch Observability**: Monitoring and logging
-
-### 🏗️ **Networking**
-
-- Optional VPC creation with configurable CIDR blocks
-- Transit Gateway integration for multi-VPC connectivity
-- NAT Gateway support (single AZ or all AZs)
-- Subnet tagging for Kubernetes service discovery
+- **Kubecost**: Cost monitoring and optimization with AWS CUR integration
 
 ## Usage
 
@@ -108,36 +102,6 @@ module "eks" {
     service_account = "external-secrets"
     secrets_manager_arns = ["arn:aws:secretsmanager:*:*"]
     ssm_parameter_arns = ["arn:aws:ssm:*:*:parameter/eks/*"]
-  }
-}
-```
-
-### EKS Cluster with Custom Networking
-
-```hcl
-module "eks" {
-  source = "appvia/eks/aws"
-  version = "1.0.0"
-
-  cluster_name = "custom-network-eks"
-  tags = {
-    Environment = "Production"
-    Product     = "EKS"
-    Owner       = "Engineering"
-  }
-
-  # Custom VPC configuration
-  vpc_cidr = "10.100.0.0/21"
-  availability_zones = 3
-  nat_gateway_mode = "all_azs"
-  private_subnet_netmask = 24
-  public_subnet_netmask = 24
-
-  # Transit Gateway integration
-  transit_gateway_id = "tgw-1234567890"
-  transit_gateway_routes = {
-    private = "10.0.0.0/8"
-    database = "10.1.0.0/16"
   }
 }
 ```
@@ -204,6 +168,86 @@ module "eks" {
     enabled = true
     namespace = "argocd"
     service_account = "argocd"
+  }
+}
+```
+
+## Networking Options
+
+### VPC & Networking
+
+The module assumes the account alread has an existing VPC to provision the cluster within. We need the VPC ID and the subnet IDs for the private subnets where the cluster should be located.
+
+```hcl
+# Use existing VPC
+vpc_id = "vpc-1234567890"
+private_subnet_ids = ["subnet-1234567890", "subnet-0987654321"]
+```
+
+## Security Features
+
+### Access Control
+
+Configure cluster access using access entries.
+
+```hcl
+access_entries = {
+  admin = {
+    principal_arn = "arn:aws:iam::123456789012:role/AdminRole"
+    policy_associations = {
+      cluster_admin = {
+        policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+        access_scope = {
+          type = "cluster"
+        }
+      }
+    }
+  }
+}
+```
+
+### Pod Identity
+
+Secure workload-to-AWS service authentication.
+
+```hcl
+pod_identity = {
+  my-workload = {
+    enabled = true
+    name = "my-workload-identity"
+    namespace = "my-namespace"
+    service_account = "my-service-account"
+    managed_policy_arns = {
+      "S3Access" = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+    }
+  }
+}
+```
+
+### Security Groups
+
+Customize security group rules for cluster and nodes.
+
+```hcl
+cluster_security_group_additional_rules = {
+  custom_ingress = {
+    description = "Custom ingress rule"
+    protocol    = "tcp"
+    from_port   = 8080
+    to_port     = 8080
+    type        = "ingress"
+    cidr_blocks = ["10.0.0.0/8"]
+  }
+}
+
+node_security_group_additional_rules = {
+  custom_egress = {
+    description = "Custom egress rule"
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+    type        = "egress"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 ```
@@ -302,109 +346,136 @@ cloudwatch_observability = {
 }
 ```
 
-## Networking Options
+## Kubecost Cost Monitoring
 
-### VPC Creation
+Kubecost provides comprehensive cost monitoring and optimization for Kubernetes clusters with advanced AWS integration capabilities.
 
-The module can create a new VPC or use an existing one.
+### Overview
+
+Kubecost offers three main deployment modes:
+
+1. **Standalone**: Single cluster cost monitoring
+2. **Federated Storage**: Multi-cluster aggregation for centralized monitoring
+3. **Cloud Costs**: Integration with AWS Cost and Usage Reports (CUR) via Athena
+
+### Prerequisites
+
+Before setting up Kubecost, ensure you have:
+
+- An active AWS account with appropriate permissions
+- S3 buckets for data storage and Athena query results
+- AWS Cost and Usage Report (CUR) configured (for cloud costs feature)
+- Amazon Athena setup with Glue database and table (for cloud costs feature)
+
+### AWS CUR Setup
+
+To enable cloud costs analysis, you need to set up AWS Cost and Usage Reports:
+
+1. **Create CUR in AWS Billing Console**:
+   - Navigate to AWS Billing Dashboard
+   - Create a new Cost and Usage Report with daily granularity
+   - Enable Resource IDs and Athena integration
+   - Specify an S3 bucket for CUR data storage
+
+2. **Set up Athena Integration**:
+   - Use the AWS-provided CloudFormation template to create Athena resources
+   - Create an S3 bucket for Athena query results
+   - Configure Athena workgroup and database
+
+### IAM Permissions
+
+The module automatically provisions the necessary IAM roles and policies:
+
+- **S3 Access**: Read/write access to federated and CUR buckets
+- **Athena Operations**: Query execution, monitoring, and result retrieval
+- **Glue Metadata**: Database and table schema access for CUR data
+
+Cost monitoring and optimization for Kubernetes clusters with AWS integration.
+
+#### Standalone Kubecost
+
+Basic cost monitoring for a single cluster.
 
 ```hcl
-# Create new VPC
-vpc_cidr = "10.0.0.0/21"
-availability_zones = 3
-
-# Use existing VPC
-vpc_id = "vpc-1234567890"
-private_subnet_ids = ["subnet-1234567890", "subnet-0987654321"]
-```
-
-### Transit Gateway Integration
-
-Connect to existing transit gateways for multi-VPC connectivity.
-
-```hcl
-transit_gateway_id = "tgw-1234567890"
-transit_gateway_routes = {
-  private = "10.0.0.0/8"
-  database = "10.1.0.0/16"
+kubecosts = {
+  enabled = true
 }
 ```
 
-### NAT Gateway Configuration
+#### Federated Storage (Multi-Cluster Aggregation)
 
-Configure NAT gateways for outbound internet access.
+Aggregate cost data from multiple clusters into a primary cluster for centralized monitoring.
 
 ```hcl
-nat_gateway_mode = "single_az"  # or "all_azs"
+# Primary cluster (aggregates data from all clusters)
+kubecosts = {
+  enabled = true
+  federated_storage = {
+    federated_bucket_arn = "arn:aws:s3:::kubecost-federated-bucket"
+    create_bucket = true
+    allowed_principals = [
+      "ACCOUNT_ID"
+    ]
+  }
+}
+
+# Secondary clusters (send data to primary)
+kubecosts_agent = {
+  enabled = true
+  federated_bucket_name = "arn:aws:s3:::kubecost-federated-bucket"
+}
 ```
 
-## Security Features
+#### Cloud Costs via AWS CUR
 
-### Access Control
-
-Configure cluster access using access entries.
+Integrate with AWS Cost and Usage Reports (CUR) via Amazon Athena for comprehensive cloud cost analysis.
 
 ```hcl
-access_entries = {
-  admin = {
-    principal_arn = "arn:aws:iam::123456789012:role/AdminRole"
-    policy_associations = {
-      cluster_admin = {
-        policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-        access_scope = {
-          type = "cluster"
-        }
-      }
-    }
+kubecosts = {
+  enabled = true
+  fedarated_storage = {
+    federated_bucket_arn = "my-kubecost-bucket"
+  }
+  
+  # Cloud costs integration with AWS CUR via Athena
+  cloud_costs = {
+    enable = true
+    cur_bucket_name = "my-cur-bucket"
+    athena_bucket_arn = "arn:s3:aws:::my-athena-results-bucket"
+    athena_database_name = "cost_and_usage_data"
+    athena_table_name = "cur_table"
   }
 }
 ```
 
-### Pod Identity
+### Verification
 
-Secure workload-to-AWS service authentication.
+After deployment, verify Kubecost is working correctly:
 
-```hcl
-pod_identity = {
-  my-workload = {
-    enabled = true
-    name = "my-workload-identity"
-    namespace = "my-namespace"
-    service_account = "my-service-account"
-    managed_policy_arns = {
-      "S3Access" = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-    }
-  }
-}
-```
+1. **Access the Dashboard**:
 
-### Security Groups
+   ```bash
+   kubectl port-forward -n kubecost svc/kubecost-cost-analyzer 9090:9090
+   ```
 
-Customize security group rules for cluster and nodes.
+2. **Check Cloud Integration**:
+   - Navigate to Settings → Cloud Cost Settings
+   - Verify AWS integration is active
+   - Check for any error messages
 
-```hcl
-cluster_security_group_additional_rules = {
-  custom_ingress = {
-    description = "Custom ingress rule"
-    protocol    = "tcp"
-    from_port   = 8080
-    to_port     = 8080
-    type        = "ingress"
-    cidr_blocks = ["10.0.0.0/8"]
-  }
-}
+3. **Monitor Logs**:
 
-node_security_group_additional_rules = {
-  custom_egress = {
-    description = "Custom egress rule"
-    protocol    = "tcp"
-    from_port   = 443
-    to_port     = 443
-    type        = "egress"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-```
+   ```bash
+   kubectl logs -n kubecost deployment/kubecost-cost-analyzer
+   ```
+
+### Additional Resources
+
+- [Kubecost Documentation](https://docs.kubecost.com/)
+- [AWS Cloud Billing Integration](https://docs.kubecost.com/cloud-integration/aws-cloud-integration)
+- [Multi-Cluster Setup](https://docs.kubecost.com/install-and-configure/install/multi-cluster)
+- [AWS CUR Setup Guide](https://docs.aws.amazon.com/cur/latest/userguide/)
+- [Athena Integration](https://docs.aws.amazon.com/athena/latest/ug/)
 
 ## Examples
 
@@ -414,6 +485,7 @@ See the [examples](./examples/) directory for complete usage examples:
 - [Platform Services](./examples/platform/) - EKS with integrated platform services
 - [Custom Networking](./examples/networking/) - EKS with custom VPC and transit gateway
 - [Pod Identity](./examples/pod-identity/) - EKS with custom pod identities
+- [Kubecost Cost Monitoring](./examples/kubecost/) - EKS with Kubecost cost monitoring and AWS integration
 
 ## Requirements
 
@@ -474,6 +546,8 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | <a name="input_kms_key_administrators"></a> [kms\_key\_administrators](#input\_kms\_key\_administrators) | A list of IAM ARNs for EKS key administrators. If no value is provided, the current caller identity is used to ensure at least one key admin is available. | `list(string)` | `[]` | no |
 | <a name="input_kms_key_service_users"></a> [kms\_key\_service\_users](#input\_kms\_key\_service\_users) | A list of IAM ARNs for EKS key service users. | `list(string)` | `[]` | no |
 | <a name="input_kms_key_users"></a> [kms\_key\_users](#input\_kms\_key\_users) | A list of IAM ARNs for EKS key users. | `list(string)` | `[]` | no |
+| <a name="input_kubecosts"></a> [kubecosts](#input\_kubecosts) | The Kubecost configuration | <pre>object({<br/>    ## Indicates if we should enable the Kubecost platform<br/>    enable = optional(bool, false)<br/>    ## The namespace to deploy the Kubecost platform to<br/>    namespace = optional(string, "kubecost")<br/>    ## The service account to deploy the Kubecost platform to<br/>    service_account = optional(string, "kubecost")<br/>    ## Fedarate storage configuration<br/>    federated_storage = optional(object({<br/>      ## Indicates if we should create the federated bucket<br/>      create_bucket = optional(bool, false)<br/>      ## KMS key ARN to use for the federated bucket<br/>      kms_key_arn = optional(string, null)<br/>      ## The ARN of the federated bucket to use for the Kubecost platform<br/>      federated_bucket_arn = optional(string, null)<br/>      ## List of principals to allowed to write to the federated bucket<br/>      allowed_principals = optional(list(string), [])<br/>    }), {})<br/>    ## Cloud Costs feature <br/>    cloud_costs = optional(object({<br/>      ## Indicates if we should enable cloud costs via Athena<br/>      enable = optional(bool, false)<br/>      ## The ARN of the S3 bucket for Cost and Usage Report (CUR) data<br/>      cur_bucket_arn = optional(string, null)<br/>      ## The ARN of the S3 bucket for Athena query results<br/>      athena_bucket_arn = optional(string, null)<br/>      ## The name of the Athena database for CUR data<br/>      athena_database_name = optional(string, null)<br/>      ## The ARN of the Athena table for CUR data<br/>      athena_table_name = optional(string, null)<br/>    }), {})<br/>  })</pre> | `null` | no |
+| <a name="input_kubecosts_agent"></a> [kubecosts\_agent](#input\_kubecosts\_agent) | The Kubecost Agent configuration | <pre>object({<br/>    ## Indicates if we should enable the Kubecost Agent platform<br/>    enable = optional(bool, false)<br/>    ## The namespace to deploy the Kubecost Agent platform to<br/>    namespace = optional(string, "kubecost")<br/>    ## The service account to deploy the Kubecost Agent platform to<br/>    service_account = optional(string, "kubecost-agent")<br/>    ## The ARN of the federated bucket to use for the Kubecost Agent platform<br/>    federated_bucket_arn = string<br/>  })</pre> | `null` | no |
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes version for the EKS cluster | `string` | `"1.34"` | no |
 | <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | Collection of nodepools to create via auto-mote karpenter | `list(string)` | <pre>[<br/>  "system"<br/>]</pre> | no |
 | <a name="input_node_security_group_additional_rules"></a> [node\_security\_group\_additional\_rules](#input\_node\_security\_group\_additional\_rules) | List of additional security group rules to add to the node security group created. Set `source_cluster_security_group = true` inside rules to set the `cluster_security_group` as source. | `any` | `{}` | no |

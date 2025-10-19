@@ -55,6 +55,7 @@ module "network" {
     "kubernetes.io/cluster/dev" = "owned"
     "kubernetes.io/role/elb"    = "1"
   }
+
 }
 
 ## Provision a EKS cluster for the hub
@@ -70,4 +71,30 @@ module "eks" {
   private_subnet_ids        = module.network.private_subnet_ids
   tags                      = local.tags
   vpc_id                    = module.network.vpc_id
+
+  ## Enable Cert Manager
+  cert_manager = {
+    enable = true
+  }
+  ## Enable External Secrets
+  external_secrets = {
+    enable = true
+  }
+  ## Enable External DNS
+  external_dns = {
+    enable = true
+  }
+
+  ## Enable the Kubecost platform
+  kubecosts = {
+    enable                = true
+    namespace             = "kubecost"
+    service_account       = "kubecost"
+    federated_bucket_name = "dev-federated-bucket"
+    cloud_costs = {
+      enable             = true
+      cur_bucket_name    = "dev-cur-bucket"
+      athena_bucket_name = "dev-athena-bucket"
+    }
+  }
 }

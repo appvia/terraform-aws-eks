@@ -6,6 +6,8 @@ locals {
   name = var.cluster_name
   ## Current AWS region
   region = data.aws_region.current.region
+  ## The root account ARN
+  root_account_arn = "arn:aws:iam::${local.account_id}:root"
   ## Tags applied to all resources
   tags = merge(var.tags, { Provisioner = "Terraform" })
   ## Indicates if we should enable cross account role
