@@ -8,7 +8,7 @@ locals {
   enable_kubecosts = try(var.kubecosts.enable, false)
   ## Indicating if we should enable cloud costs via Athena
   enable_kubecosts_cloud_costs = try(var.kubecosts.cloud_costs.enable, false)
-  ## List of principals to allowed to write to the federated bucket - we always allow 
+  ## List of principals to allowed to write to the federated bucket - we always allow
   ## the root account and the kubecost pod identity
   allowed_principals = concat(
     [local.root_account_arn],
@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "kubecost_federated_bucket_policy" {
     ]
   }
 
-  ## Allow all accounts within my organization, using the kubecost agent 
+  ## Allow all accounts within my organization, using the kubecost agent
   dynamic "statement" {
     for_each = toset(local.allowed_principals)
     content {
@@ -81,6 +81,7 @@ module "kubecost_federated_bucket" {
   force_destroy                         = true
   object_ownership                      = "BucketOwnerEnforced"
   policy                                = data.aws_iam_policy_document.kubecost_federated_bucket_policy.json
+  tags                                  = local.tags
 
   lifecycle_rule = [
     {
@@ -128,7 +129,7 @@ module "kubecost_pod_identity" {
   associations = {
     kubecost = {
       ## The name of the cluster to associate the Kubecost Platform pod identity with
-      cluster_name = var.cluster_name
+      cluster_name = module.eks.cluster_name
       ## The namespace to associate the Kubecost Platform pod identity with
       namespace = try(var.kubecosts.namespace, "kubecosts")
       ## The service account to associate the Kubecost Platform pod identity with
@@ -225,7 +226,7 @@ module "kubecost_agent_pod_identity" {
   associations = {
     kubecost = {
       ## The name of the cluster to associate the Kubecost Agent pod identity with
-      cluster_name = var.cluster_name
+      cluster_name = module.eks.cluster_name
       ## The namespace to associate the Kubecost Agent pod identity with
       namespace = try(var.kubecosts_agent.namespace, "kubecosts")
       ## The service account to associate the Kubecost Agent pod identity with
