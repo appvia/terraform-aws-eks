@@ -33,6 +33,7 @@ module "eks" {
   kms_key_users                            = var.kms_key_users
   kubernetes_version                       = var.kubernetes_version
   name                                     = var.cluster_name
+  outpost_config                           = null
   subnet_ids                               = var.private_subnet_ids
   tags                                     = local.tags
   vpc_id                                   = var.vpc_id
