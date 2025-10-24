@@ -47,6 +47,8 @@ variable "ebs_csi_driver" {
     version = optional(string, "v1.51.0-eksbuild.1")
     ## The service account to deploy the EBS CSI driver to
     service_account = optional(string, "ebs-csi-controller-sa")
+    ## The namespace to deploy the EBS CSI driver to
+    namespace = optional(string, "kube-system")
   })
   default = {}
 }
