@@ -63,6 +63,10 @@ module "eks" {
     }
   }, var.security_group_additional_rules)
 
+  node_iam_role_additional_policies = {
+    "cni-policy" = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  }
+
   ## Additional Security Group Rules for the Node Security Group
   node_security_group_additional_rules = merge({
     ingress_self_all = {
