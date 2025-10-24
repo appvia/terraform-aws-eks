@@ -18,6 +18,8 @@ locals {
 
 ## IAM Bucket Policy for the Kubecost Federated Bucket
 data "aws_iam_policy_document" "kubecost_federated_bucket_policy" {
+  count = local.enable_kubecosts ? 1 : 0
+
   statement {
     effect  = "Allow"
     actions = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
@@ -25,7 +27,7 @@ data "aws_iam_policy_document" "kubecost_federated_bucket_policy" {
       type = "AWS"
       identifiers = concat(
         [local.root_account_arn],
-        [module.kubecost_pod_identity[0].iam_role_arn],
+        [try(module.kubecost_pod_identity[0].iam_role_arn, null)],
       )
     }
     resources = [
@@ -80,7 +82,7 @@ module "kubecost_federated_bucket" {
   attach_require_latest_tls_policy      = true
   force_destroy                         = true
   object_ownership                      = "BucketOwnerEnforced"
-  policy                                = data.aws_iam_policy_document.kubecost_federated_bucket_policy.json
+  policy                                = data.aws_iam_policy_document.kubecost_federated_bucket_policy[0].json
   tags                                  = local.tags
 
   lifecycle_rule = [
