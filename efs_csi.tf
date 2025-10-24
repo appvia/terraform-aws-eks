@@ -5,8 +5,6 @@
 locals {
   ## Indicates if we should enable the EFS CSI driver
   enable_efs_csi_driver = try(var.efs_csi_driver.enable, false) ? true : false
-  ## The name of the EFS CSI driver policy
-  efs_csi_policy_name_prefix = "${var.cluster_name}-efs-csi-driver"
 }
 
 ## Attach the EFS CSI driver policy to the EKS cluster
@@ -15,11 +13,24 @@ module "aws_efs_csi_pod_identity" {
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.2.0"
 
-  name                      = "${local.efs_csi_policy_name_prefix}-pod-identity"
+  name                      = "${local.name}-efs-csi-driver"
   attach_aws_efs_csi_policy = true
-  aws_efs_csi_policy_name   = local.efs_csi_policy_name_prefix
-  description               = "Pod identity for the EFS CSI driver for the ${var.cluster_name} cluster"
+  aws_efs_csi_policy_name   = format("%s-efs-csi-driver", local.name)
+  description               = "Pod identity for the EFS CSI driver for the ${local.name} cluster"
   tags                      = local.tags
+
+  ## Default association for the EFS CSI driver pod identity
+  association_defaults = {
+    namespace       = var.efs_csi_driver.namespace
+    service_account = var.efs_csi_driver.service_account
+  }
+
+  ## Associations for the EFS CSI driver pod identity
+  associations = {
+    addon = {
+      cluster_name = module.eks.cluster_name
+    }
+  }
 }
 
 ## Attach the EFS CSI driver policy to the EKS cluster

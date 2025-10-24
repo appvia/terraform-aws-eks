@@ -21,6 +21,21 @@ variable "access_entries" {
   default = null
 }
 
+variable "aws_prometheus" {
+  description = "The AWS Prometheus configuration"
+  type = object({
+    ## Indicates if we should enable the managed Prometheus
+    enable = optional(bool, false)
+    ## Collection of workspaces to provide permissions to i.e. arn:aws:prometheus:*:*:workspace/*
+    workspaces = optional(list(string), ["arn:aws:prometheus:*:*:workspace/*"])
+    ## The service account to deploy the AWS Prometheus to
+    service_account = optional(string, "prometheus")
+    ## The namespace to deploy the AWS Prometheus to
+    namespace = optional(string, "prometheus")
+  })
+  default = {}
+}
+
 variable "ebs_csi_driver" {
   description = "The EBS CSI driver configuration"
   type = object({
@@ -45,6 +60,8 @@ variable "efs_csi_driver" {
     version = optional(string, "v1.6.0-eksbuild.1")
     ## The service account to deploy the EFS CSI driver to
     service_account = optional(string, "efs-csi-controller-sa")
+    ## The namespace to deploy the EFS CSI driver to
+    namespace = optional(string, "kube-system")
   })
   default = {}
 }

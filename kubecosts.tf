@@ -115,9 +115,9 @@ module "kubecost_pod_identity" {
 
   name = "kubecosts-${local.name}"
   ## The description for the iam role assumed by the Kubecost Platform
-  description = "Pod identity for the Kubecost Platform for the ${var.cluster_name} cluster"
+  description = "Pod identity for the Kubecost Platform for the ${local.name} cluster"
   ## Description for the custom policy for the Kubecost Platform
-  custom_policy_description = "Permissions to access the S3 bucket for the Kubecost Platform for the ${var.cluster_name} cluster"
+  custom_policy_description = "Permissions to access the S3 bucket for the Kubecost Platform for the ${local.name} cluster"
   ## Attach the custom policy to the Kubecost Platform pod identity
   attach_custom_policy = true
   ## The tags for the Kubecost Platform pod identity
@@ -125,15 +125,17 @@ module "kubecost_pod_identity" {
   ## Always use a prefix for the name
   use_name_prefix = true
 
+  ## Default association for the Kubecost Platform pod identity
+  association_defaults = {
+    namespace       = var.kubecosts.namespace
+    service_account = var.kubecosts.service_account
+  }
+
   # Pod Identity Associations
   associations = {
     kubecost = {
       ## The name of the cluster to associate the Kubecost Platform pod identity with
       cluster_name = module.eks.cluster_name
-      ## The namespace to associate the Kubecost Platform pod identity with
-      namespace = try(var.kubecosts.namespace, "kubecosts")
-      ## The service account to associate the Kubecost Platform pod identity with
-      service_account = try(var.kubecosts.service_account, "kubecosts")
     }
   }
 
@@ -210,11 +212,11 @@ module "kubecost_agent_pod_identity" {
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.2.0"
 
-  name = "kubecosts-agent-${local.name}"
+  name = "${local.name}-kubecost-agent"
   ## The description for the role assumed by the Kubecost Agent
-  description = "Role assumed by the Kubecost Agent for the ${var.cluster_name} cluster"
+  description = "Role assumed by the Kubecost Agent for the ${local.name} cluster"
   ## The description for the custom policy for the Kubecost Agent
-  custom_policy_description = "Permissions to access the S3 bucket for the Kubecost Agent for the ${var.cluster_name} cluster"
+  custom_policy_description = "Permissions to access the S3 bucket for the Kubecost Agent for the ${local.name} cluster"
   ## The tags for the Kubecost Agent pod identity
   tags = local.tags
   ## Always use a prefix for the name
@@ -222,15 +224,17 @@ module "kubecost_agent_pod_identity" {
   ## Attach the custom policy to the Kubecost Agent pod identity
   attach_custom_policy = true
 
+  ## Default association for the Kubecost Agent pod identity
+  association_defaults = {
+    namespace       = var.kubecosts_agent.namespace
+    service_account = var.kubecosts_agent.service_account
+  }
+
   # Pod Identity Associations
   associations = {
     kubecost = {
       ## The name of the cluster to associate the Kubecost Agent pod identity with
       cluster_name = module.eks.cluster_name
-      ## The namespace to associate the Kubecost Agent pod identity with
-      namespace = try(var.kubecosts_agent.namespace, "kubecosts")
-      ## The service account to associate the Kubecost Agent pod identity with
-      service_account = try(var.kubecosts_agent.service_account, "kubecosts")
     }
   }
 

@@ -13,12 +13,16 @@ module "pod_identity" {
   policy_statements        = try(each.value.policy_statements, [])
   tags                     = local.tags
 
+  ## Default association for the pod identity
+  association_defaults = {
+    namespace       = each.value.namespace
+    service_account = each.value.service_account
+  }
+
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name    = module.eks.cluster_name
-      namespace       = each.value.namespace
-      service_account = each.value.service_account
+      cluster_name = module.eks.cluster_name
     }
   }
 }
@@ -36,12 +40,16 @@ module "aws_cert_manager_pod_identity" {
   cert_manager_policy_name      = format("cert-manager-%s", local.name)
   tags                          = local.tags
 
+  ## Default association for the cert-manager pod identity
+  association_defaults = {
+    namespace       = try(var.cert_manager.namespace, "cert-manager")
+    service_account = try(var.cert_manager.service_account, "cert-manager")
+  }
+
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name    = module.eks.cluster_name
-      namespace       = try(var.cert_manager.namespace, "cert-manager")
-      service_account = try(var.cert_manager.service_account, "cert-manager")
+      cluster_name = module.eks.cluster_name
     }
   }
 }
@@ -59,12 +67,16 @@ module "aws_external_dns_pod_identity" {
   external_dns_hosted_zone_arns = try(var.external_dns.hosted_zone_arns, [])
   external_dns_policy_name      = format("external-dns-%s", local.name)
 
+  ## Default association for the external DNS pod identity
+  association_defaults = {
+    namespace       = try(var.external_dns.namespace, "external-dns")
+    service_account = try(var.external_dns.service_account, "external-dns")
+  }
+
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name    = module.eks.cluster_name
-      namespace       = try(var.external_dns.namespace, "external-dns")
-      service_account = try(var.external_dns.service_account, "external-dns")
+      cluster_name = module.eks.cluster_name
     }
   }
 }
@@ -81,6 +93,12 @@ module "aws_argocd_pod_identity" {
   custom_policy_description = "Allow ArgoCD to assume role into spoke accounts"
   tags                      = local.tags
 
+  ## Default association for the argocd pod identity
+  association_defaults = {
+    namespace       = try(var.argocd.namespace, "argocd")
+    service_account = try(var.argocd.service_account, "argocd")
+  }
+
   policy_statements = [
     {
       actions = [
@@ -96,9 +114,7 @@ module "aws_argocd_pod_identity" {
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name    = module.eks.cluster_name
-      namespace       = try(var.argocd.namespace, "argocd")
-      service_account = try(var.argocd.service_account, "argocd")
+      cluster_name = module.eks.cluster_name
     }
   }
 }
@@ -116,12 +132,16 @@ module "aws_terranetes_pod_identity" {
   permissions_boundary_arn  = try(var.terranetes.permissions_boundary_arn, null)
   tags                      = local.tags
 
+  ## Default association for the Terranetes pod identity
+  association_defaults = {
+    namespace       = try(var.terranetes.namespace, "terraform-system")
+    service_account = try(var.terranetes.service_account, "terranetes-executor")
+  }
+
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name    = module.eks.cluster_name
-      namespace       = try(var.terranetes.namespace, "terraform-system")
-      service_account = try(var.terranetes.service_account, "terranetes-executor")
+      cluster_name = module.eks.cluster_name
     }
   }
 }
@@ -141,12 +161,16 @@ module "aws_external_secrets_pod_identity" {
   external_secrets_policy_name          = format("external-secrets-%s", local.name)
   tags                                  = local.tags
 
+  ## Default association for the External Secrets pod identity
+  association_defaults = {
+    namespace       = try(var.external_secrets.namespace, "external-secrets")
+    service_account = try(var.external_secrets.service_account, "external-secrets")
+  }
+
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name    = module.eks.cluster_name
-      namespace       = try(var.external_secrets.namespace, "external-secrets")
-      service_account = try(var.external_secrets.service_account, "external-secrets")
+      cluster_name = module.eks.cluster_name
     }
   }
 }
@@ -163,12 +187,16 @@ module "aws_ack_iam_pod_identity" {
   custom_policy_description = "AWS IAM Controllers for the ACK system for the ${local.name} cluster"
   tags                      = local.tags
 
+  ## Default association for the AWS ACK IAM pod identity
+  association_defaults = {
+    namespace       = try(var.aws_ack_iam.namespace, "ack-system")
+    service_account = try(var.aws_ack_iam.service_account, "ack-iam-controller")
+  }
+
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name    = module.eks.cluster_name
-      namespace       = try(var.aws_ack_iam.namespace, "ack-system")
-      service_account = try(var.aws_ack_iam.service_account, "ack-iam-controller")
+      cluster_name = module.eks.cluster_name
     }
   }
 }
@@ -184,12 +212,16 @@ module "aws_cloudwatch_observability_pod_identity" {
   attach_aws_cloudwatch_observability_policy = true
   tags                                       = local.tags
 
+  ## Default association for the CloudWatch Agent pod identity
+  association_defaults = {
+    namespace       = try(var.cloudwatch_observability.namespace, "cloudwatch-observability")
+    service_account = try(var.cloudwatch_observability.service_account, "cloudwatch-observability")
+  }
+
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name    = module.eks.cluster_name
-      namespace       = try(var.cloudwatch_observability.namespace, "cloudwatch-observability")
-      service_account = try(var.cloudwatch_observability.service_account, "cloudwatch-observability")
+      cluster_name = module.eks.cluster_name
     }
   }
 }
