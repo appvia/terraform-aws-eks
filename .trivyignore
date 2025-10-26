@@ -1,4 +1,20 @@
-AVD-AWS-0038 # Control plan logging
-AVD-KSV-0012
-AVD-KSV-0014
-AVD-KSV-0118
+AVD-AWS-0038 # https://avd.aquasec.com/misconfig/aws/eks/avd-aws-0038/
+AVD-AWS-0039 # https://avd.aquasec.com/misconfig/aws/eks/avd-aws-0039/
+AVD-KSV-0001 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0001/
+AVD-KSV-0003 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0003/
+AVD-KSV-0004 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0004/
+AVD-KSV-0011 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0011/
+AVD-KSV-0012 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0012/
+AVD-KSV-0014 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0114/
+AVD-KSV-0016 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0016/
+AVD-KSV-0018 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0018/
+AVD-KSV-0020 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0020/
+AVD-KSV-0021 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0021/
+AVD-KSV-0030 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0030/
+AVD-KSV-0104 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0104/
+AVD-KSV-0106 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0106/
+AVD-KSV-0110 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0110/
+AVD-KSV-0118 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0118/ 
+AVD-KSV-0125 # https://avd.aquasec.com/misconfig/kubernetes/general/avd-ksv-0125/
+
+
