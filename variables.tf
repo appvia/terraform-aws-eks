@@ -53,6 +53,28 @@ variable "ebs_csi_driver" {
   default = {}
 }
 
+variable "registries" {
+  description = "Provision pull-through cache for registries"
+  type = map(object({
+    ## The name of the registry
+    name = string
+    ## The URL of the registry
+    url = string
+    ## Optional credentials arn to use for the registry
+    credentials_arn = optional(string, null)
+    ## Optional credentials to use for the registry
+    credentials = optional(object({
+      ## Name of the secret to provision in aws secrets manager
+      secret_name = optional(string, null)
+      ## The username to use for the registry
+      username = string
+      ## The password to use for the registry
+      password = string
+    }), null)
+  }))
+  default = {}
+}
+
 variable "efs_csi_driver" {
   description = "The EFS CSI driver configuration"
   type = object({
