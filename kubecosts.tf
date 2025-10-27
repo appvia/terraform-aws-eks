@@ -74,7 +74,7 @@ data "aws_iam_policy_document" "kubecost_federated_bucket_policy" {
 module "kubecost_federated_bucket" {
   count   = local.enable_kubecosts && try(var.kubecosts.federated_storage.create_bucket, false) ? 1 : 0
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.10.0"
+  version = "5.8.2"
 
   bucket                                = trim(var.kubecosts.federated_storage.federated_bucket_arn, "arn:aws:s3:::")
   attach_deny_insecure_transport_policy = true
