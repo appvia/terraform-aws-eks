@@ -19,7 +19,7 @@ locals {
 ## Provision a network for the cluster
 module "network" {
   source  = "appvia/network/aws"
-  version = "0.6.12"
+  version = "0.6.13"
 
   availability_zones     = 3
   name                   = local.cluster_name
