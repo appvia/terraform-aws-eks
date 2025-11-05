@@ -13,7 +13,7 @@ resource "aws_iam_role" "argocd_cross_account_role" {
 # tfsec:ignore:aws-eks-no-public-cluster-access-to-cidr
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "21.6.1"
+  version = "21.8.0"
 
   access_entries                           = local.access_entries
   addons                                   = var.addons
