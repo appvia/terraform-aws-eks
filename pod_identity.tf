@@ -201,6 +201,52 @@ module "aws_ack_iam_pod_identity" {
   }
 }
 
+## Provision the pod identity for the AWS EKS ACK Controller
+module "aws_eks_ack_controller_pod_identity" {
+  count   = var.aws_eks_ack.enable ? 1 : 0
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "2.2.0"
+
+  name                      = "eks-ack-controller-${local.name}"
+  description               = "Pod identity for the AWS EKS ACK Controller for the ${local.name} cluster"
+  additional_policy_arns    = try(var.aws_eks_ack.managed_policy_arns, {})
+  attach_custom_policy      = true
+  custom_policy_description = "Permissions to create and manage the AWS EKS ACK Controller for the ${local.name} cluster"
+  tags                      = local.tags
+
+  policy_statements = [
+    {
+      sid    = "AllowPodIdentityAssociation"
+      effect = "Allow"
+      actions = [
+        "eks:CreatePodIdentityAssociation",
+        "eks:DeletePodIdentityAssociation",
+        "eks:DescribePodIdentityAssociation",
+        "eks:ListPodIdentityAssociations",
+        "eks:TagResource",
+        "eks:UntagResource",
+        "eks:UpdatePodIdentityAssociation",
+        "iam:GetRole",
+        "iam:PassRole",
+      ]
+      resources = ["*"]
+    }
+  ]
+
+  ## Default association for the AWS EKS ACK Controller pod identity
+  association_defaults = {
+    namespace       = try(var.aws_eks_ack.namespace, "ack-system")
+    service_account = try(var.aws_eks_ack.service_account, "ack-eks-controller")
+  }
+
+  # Pod Identity Associations
+  associations = {
+    addon = {
+      cluster_name = module.eks.cluster_name
+    }
+  }
+}
+
 ## Provision the pod identity for the CloudWatch Agent
 module "aws_cloudwatch_observability_pod_identity" {
   count   = var.cloudwatch_observability.enable ? 1 : 0

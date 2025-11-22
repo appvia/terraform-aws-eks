@@ -216,17 +216,34 @@ variable "external_secrets" {
   default = {}
 }
 
+variable "aws_eks_ack" {
+  description = "The AWS EKS ACK Controller configuration"
+  type = object({
+    ## Indicates if we should enable the AWS EKS ACK Controller platform
+    enable = optional(bool, true)
+    ## The namespace to deploy the AWS EKS ACK Controller platform to
+    namespace = optional(string, "ack-system")
+    ## The service account to deploy the AWS EKS ACK Controller platform to
+    service_account = optional(string, "ack-eks-controller")
+    ## Managed policies to attach to the AWS EKS ACK Controller platform
+    managed_policy_arns = optional(map(string), {})
+  })
+  default = {}
+}
+
 variable "aws_ack_iam" {
   description = "The AWS ACK IAM configuration"
   type = object({
     ## Indicates if we should enable the AWS ACK IAM platform
-    enable = optional(bool, false)
+    enable = optional(bool, true)
     ## The namespace to deploy the AWS ACK IAM platform to
     namespace = optional(string, "ack-system")
     ## The service account to deploy the AWS ACK IAM platform to
     service_account = optional(string, "ack-iam-controller")
     ## Managed policies to attach to the AWS ACK IAM platform
-    managed_policy_arns = optional(map(string), {})
+    managed_policy_arns = optional(map(string), {
+      "admin" = "arn:aws:iam::aws:policy/IAMFullAccess"
+    })
   })
   default = {}
 }
