@@ -6,7 +6,7 @@
 module "amazon_managed_service_prometheus_pod_identity" {
   count   = var.aws_prometheus.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.4.2"
+  version = "2.5.0"
 
   amazon_managed_service_prometheus_policy_name    = "${local.name}-aws-prometheus"
   amazon_managed_service_prometheus_workspace_arns = var.aws_prometheus.workspaces
