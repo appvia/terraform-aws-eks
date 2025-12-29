@@ -113,7 +113,7 @@ module "kubecost_federated_bucket" {
 module "kubecost_pod_identity" {
   count   = local.enable_kubecosts ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.5.0"
+  version = "2.6.0"
 
   name = "kubecosts-${local.name}"
   ## The description for the iam role assumed by the Kubecost Platform
@@ -212,7 +212,7 @@ module "kubecost_pod_identity" {
 module "kubecost_agent_pod_identity" {
   count   = local.enable_kubecosts_agent ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.5.0"
+  version = "2.6.0"
 
   name = "${local.name}-kubecost-agent"
   ## The description for the role assumed by the Kubecost Agent
