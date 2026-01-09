@@ -11,7 +11,7 @@ locals {
 module "aws_efs_csi_pod_identity" {
   count   = local.enable_efs_csi_driver ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.5.0"
+  version = "2.6.0"
 
   name                      = "${local.name}-efs-csi-driver"
   attach_aws_efs_csi_policy = true
