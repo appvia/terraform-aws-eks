@@ -52,3 +52,5 @@ builds/
 # Ignore terraform lock file
 .terraform.lock.hcl
 examples/basic/.terraform.lock.hcl
+## Worktree directorys
+worktrees/

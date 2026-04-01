@@ -296,7 +296,7 @@ variable "kubecosts" {
       ## List of principals to allowed to write to the federated bucket
       allowed_principals = optional(list(string), [])
     }), {})
-    ## Cloud Costs feature 
+    ## Cloud Costs feature
     cloud_costs = optional(object({
       ## Indicates if we should enable cloud costs via Athena
       enable = optional(bool, false)
@@ -369,7 +369,7 @@ variable "security_group_additional_rules" {
 variable "kubernetes_version" {
   description = "Kubernetes version for the EKS cluster"
   type        = string
-  default     = "1.34"
+  default     = "1.35"
 }
 
 variable "node_pools" {
