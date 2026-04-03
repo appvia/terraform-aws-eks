@@ -62,7 +62,7 @@ variable "repositories" {
 variable "argocd_version" {
   description = "Version of ArgoCD Helm chart to install"
   type        = string
-  default     = "9.0.0"
+  default     = "9.4.17"
 }
 
 variable "cluster_type" {
