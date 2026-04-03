@@ -27,6 +27,31 @@ module "pod_identity" {
   }
 }
 
+## Provision the pod identity for the AWS Load Balancer platform
+module "aws_load_balancer_pod_identity" {
+  count   = var.aws_load_balancer.enable ? 1 : 0
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "2.7.0"
+
+  name                            = "aws-load-balancer-${local.name}"
+  description                     = "Pod identity for the AWS Load Balancer platform for the ${local.name} cluster"
+  attach_aws_lb_controller_policy = true
+  tags                            = local.tags
+
+  ## Default association for the AWS Load Balancer pod identity
+  association_defaults = {
+    namespace       = try(var.aws_load_balancer.namespace, "ingress-system")
+    service_account = try(var.aws_load_balancer.service_account, "aws-load-balancer")
+  }
+
+  # Pod Identity Associations
+  associations = {
+    addon = {
+      cluster_name = module.eks.cluster_name
+    }
+  }
+}
+
 ## Provision the pod identity for cert-manager in the hub cluster
 module "aws_cert_manager_pod_identity" {
   count   = var.cert_manager.enable ? 1 : 0

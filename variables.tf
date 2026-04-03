@@ -261,6 +261,19 @@ variable "cloudwatch_observability" {
   default = {}
 }
 
+variable "aws_load_balancer" {
+  description = "The AWS Load Balancer configuration"
+  type = object({
+    ## Indicates if we should enable the AWS Load Balancer platform
+    enable = optional(bool, false)
+    ## The namespace to deploy the AWS Load Balancer platform to
+    namespace = optional(string, "ingress-system")
+    ## The service account to deploy the AWS Load Balancer platform to
+    service_account = optional(string, "aws-load-balancer")
+  })
+  default = {}
+}
+
 variable "kubecosts_agent" {
   description = "The Kubecost Agent configuration"
   type = object({
