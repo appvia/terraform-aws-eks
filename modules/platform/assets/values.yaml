@@ -8,6 +8,8 @@ global:
 
 # Configuration for argocd notifications
 notifications:
+  # Enable notifications controller
+  enabled: false
   # COnfiguration for the config map that holds the notification
   # templates and triggers
   cm:
