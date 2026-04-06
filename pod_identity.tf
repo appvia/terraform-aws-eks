@@ -181,8 +181,8 @@ module "aws_external_secrets_pod_identity" {
   description                           = "Pod identity for the External Secrets platform for the ${local.name} cluster"
   attach_external_secrets_policy        = true
   external_secrets_create_permission    = true
-  external_secrets_secrets_manager_arns = try(var.external_secrets.secrets_manager_arns, [])
-  external_secrets_ssm_parameter_arns   = try(var.external_secrets.ssm_parameter_arns, [])
+  external_secrets_secrets_manager_arns = local.external_secrets_arns
+  external_secrets_ssm_parameter_arns   = local.external_secrets_parameter_arns
   external_secrets_policy_name          = format("external-secrets-%s", local.name)
   tags                                  = local.tags
 

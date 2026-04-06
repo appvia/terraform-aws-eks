@@ -31,4 +31,9 @@ locals {
       }
     } : {}
   )
+
+  # The defaults for external secret is no arns are defined
+  external_secrets_arns = try(var.external_secrets.secrets_manager_arns, null) != null ? var.external_secrets.secrets_manager_arns : [format("aws:arn:secretsmanager:%s:%s:secret:*", local.region, local.account_id)]
+  # The defaults for external secrets parameter store
+  external_secrets_parameter_arns = try(var.external_secrets.ssm_parameter_arns, null) != null ? var.external_secrets.ssm_parameter_arns : [format("aws:arn:ssm:%s:%s:parameter/eks/*", local.region, local.account_id)]
 }

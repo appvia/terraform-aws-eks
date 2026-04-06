@@ -209,9 +209,9 @@ variable "external_secrets" {
     ## The service account to deploy the External Secrets platform to
     service_account = optional(string, "external-secrets")
     ## The secrets manager ARNs to attach to the External Secrets platform
-    secrets_manager_arns = optional(list(string), ["arn:aws:secretsmanager:::secret:*"])
+    secrets_manager_arns = optional(list(string), null)
     ## The SSM parameter ARNs to attach to the External Secrets platform
-    ssm_parameter_arns = optional(list(string), ["arn:aws:ssm:::parameter/eks/*"])
+    ssm_parameter_arns = optional(list(string), null)
   })
   default = {}
 }
