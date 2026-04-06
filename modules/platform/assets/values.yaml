@@ -5,3 +5,12 @@ global:
     - key: "CriticalAddonsOnly"
       operator: "Exists"
       effect: "NoSchedule"
+
+# Configuration for argocd notifications
+notifications:
+  # COnfiguration for the config map that holds the notification
+  # templates and triggers
+  cm:
+    # Do not create the ConfigMap for notifications, as it will be managed
+    # by the tenant repository
+    create: false
