@@ -4,7 +4,7 @@
 module "pod_identity" {
   for_each = var.pod_identity
   source   = "terraform-aws-modules/eks-pod-identity/aws"
-  version  = "2.7.0"
+  version  = "2.8.0"
 
   name                     = each.value.name
   description              = try(each.value.description, null) != null ? try(each.value.description, null) : "Pod identity for the ${each.value.name} platform for the ${local.name} cluster"
@@ -31,7 +31,7 @@ module "pod_identity" {
 module "aws_load_balancer_pod_identity" {
   count   = var.aws_load_balancer.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.7.0"
+  version = "2.8.0"
 
   name                            = "aws-load-balancer-${local.name}"
   description                     = "Pod identity for the AWS Load Balancer platform for the ${local.name} cluster"
@@ -56,7 +56,7 @@ module "aws_load_balancer_pod_identity" {
 module "aws_cert_manager_pod_identity" {
   count   = var.cert_manager.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.7.0"
+  version = "2.8.0"
 
   name                          = "cert-manager-${local.name}"
   description                   = "Pod identity for cert-manager for the ${local.name} cluster"
@@ -83,7 +83,7 @@ module "aws_cert_manager_pod_identity" {
 module "aws_external_dns_pod_identity" {
   count   = var.external_dns.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.7.0"
+  version = "2.8.0"
 
   name                          = "external-dns-${local.name}"
   description                   = "Pod identity for external dns for the ${local.name} cluster"
@@ -110,7 +110,7 @@ module "aws_external_dns_pod_identity" {
 module "aws_argocd_pod_identity" {
   count   = var.argocd.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.7.0"
+  version = "2.8.0"
 
   name                      = "argocd-pod-identity-${local.name}"
   description               = "Pod identity for argocd for the ${local.name} cluster"
@@ -148,7 +148,7 @@ module "aws_argocd_pod_identity" {
 module "aws_terranetes_pod_identity" {
   count   = var.terranetes.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.7.0"
+  version = "2.8.0"
 
   name                      = "terranetes-${local.name}"
   description               = "Pod identity for the Terranetes platform for the ${local.name} cluster"
@@ -175,7 +175,7 @@ module "aws_terranetes_pod_identity" {
 module "aws_external_secrets_pod_identity" {
   count   = var.external_secrets.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.7.0"
+  version = "2.8.0"
 
   name                                  = "external-secrets-${local.name}"
   description                           = "Pod identity for the External Secrets platform for the ${local.name} cluster"
@@ -204,7 +204,7 @@ module "aws_external_secrets_pod_identity" {
 module "aws_ack_iam_pod_identity" {
   count   = var.aws_ack_iam.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.7.0"
+  version = "2.8.0"
 
   name                      = "ack-iam-${local.name}"
   description               = "Pod identity for the AWS ACK IAM platform for the ${local.name} cluster"
@@ -230,7 +230,7 @@ module "aws_ack_iam_pod_identity" {
 module "aws_eks_ack_controller_pod_identity" {
   count   = var.aws_eks_ack.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.7.0"
+  version = "2.8.0"
 
   name                      = "eks-ack-controller-${local.name}"
   description               = "Pod identity for the AWS EKS ACK Controller for the ${local.name} cluster"
@@ -276,7 +276,7 @@ module "aws_eks_ack_controller_pod_identity" {
 module "aws_cloudwatch_observability_pod_identity" {
   count   = var.cloudwatch_observability.enable ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.7.0"
+  version = "2.8.0"
 
   name                                       = "cloudwatch-${local.name}"
   description                                = "Pod identity for the CloudWatch Agent for the ${local.name} cluster"
