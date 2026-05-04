@@ -10,12 +10,16 @@ type: Opaque
 stringData:
   type: git
   url: ${url}
-  %{~ if username != null }
+%{~ if username != null }
   username: ${username}
-  %{~ endif }
-  %{~ if password != null }
+%{~ endif }
+%{~ if password != null }
   password: ${password}
-  %{~ endif }
-  %{~ if ssh_private_key != null }
-  ssh-private-key: ${ssh_private_key}
-  %{~ endif }
+%{~ endif }
+%{~ if ssh_private_key != null }
+  ssh-private-key: |
+    ${replace(replace(ssh_private_key, "\r\n", "\n"), "\n", "\n    ")}
+%{~ endif }
+%{~ if secret != null }
+  password: ${secret}
+%{~ endif }

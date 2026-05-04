@@ -48,6 +48,62 @@ module "platform" {
 }
 ```
 
+### Repository Configuration
+
+The `repositories` variable accepts a map of repository configurations. Each repository can be configured with credentials from one of two sources:
+
+#### Using AWS Secrets Manager (Recommended)
+
+Store sensitive credentials in AWS Secrets Manager and reference them via the `secret_manager_arn` parameter:
+
+```hcl
+repositories = {
+  "my-repo" = {
+    description        = "My repository"
+    url                = "https://github.com/example/my-repo.git"
+    secret_manager_arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:my-repo-credentials-XXXXX"
+  }
+}
+```
+
+The secret in Secrets Manager should contain a JSON object with the required credentials:
+
+```json
+{
+  "password": "my-secret-password",
+  "username": "my-username"
+}
+```
+
+#### Using Inline Credentials
+
+For non-sensitive repositories or temporary access, credentials can be provided directly:
+
+```hcl
+repositories = {
+  "my-repo" = {
+    description = "My repository"
+    url         = "https://github.com/example/my-repo.git"
+    password    = "my-password"
+    username    = "my-username"
+  }
+}
+```
+
+#### Using SSH Keys
+
+SSH-based authentication is supported:
+
+```hcl
+repositories = {
+  "my-repo" = {
+    description     = "My repository"
+    url             = "git@github.com:example/my-repo.git"
+    ssh_private_key = file("${path.module}/id_rsa")
+  }
+}
+```
+
 ## Update Documentation
 
 The `terraform-docs` utility is used to generate this README. Follow the below steps to update:
@@ -61,6 +117,7 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 
 | Name | Version |
 |------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | >= 2.0.0 |
 | <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | 2.1.3 |
 

@@ -35,6 +35,15 @@ resource "helm_release" "argocd" {
   ]
 }
 
+## Retrieve secrets from AWS Secrets Manager if secret_manager_arn is provided
+data "aws_secretsmanager_secret_version" "repository_secrets" {
+  for_each = {
+    for k, v in var.repositories : k => v if v.secret_manager_arn != null
+  }
+
+  secret_id = each.value.secret_manager_arn
+}
+
 ## Add repositories secrets into the argocd namespace if required
 resource "kubectl_manifest" "repositories" {
   for_each = var.repositories
@@ -42,13 +51,15 @@ resource "kubectl_manifest" "repositories" {
   yaml_body = templatefile("${path.module}/assets/repository.yaml", {
     name            = each.key
     url             = try(each.value.url, null)
-    username        = try(each.value.username, null)
-    password        = try(each.value.password, null)
+    username        = try(coalesce(each.value.username, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["username"], null)), null)
+    password        = try(coalesce(each.value.password, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["password"], null)), null)
     ssh_private_key = try(each.value.ssh_private_key, null)
+    secret          = try(each.value.secret, null)
   })
 
   depends_on = [
     helm_release.argocd,
+    data.aws_secretsmanager_secret_version.repository_secrets,
   ]
 }
 
