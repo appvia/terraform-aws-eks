@@ -55,6 +55,8 @@ variable "repositories" {
     password = optional(string, null)
     ## An optional SSH private key for the repository
     ssh_private_key = optional(string, null)
+    ## The type of secret (i.e. repository or repo-creds)
+    type = optional(string, "repository")
   }))
   default = {}
 }

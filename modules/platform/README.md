@@ -104,6 +104,26 @@ repositories = {
 }
 ```
 
+#### Repository secret type (`type`)
+
+Each entry in `repositories` sets the Argo CD secret label `argocd.argoproj.io/secret-type` from the optional `type` attribute. It defaults to `repository`, which creates a normal repository credential secret scoped to the exact Git URL (and includes `type: git` in the secret data where applicable).
+
+Set `type = "repo-creds"` to create a [repository credential template](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#repositories): Argo CD matches credentials to any repository whose URL starts with the same prefix as `url`. That lets you register one set of credentials for a whole GitHub organization instead of per-repo secrets—for example:
+
+```hcl
+repositories = {
+  "github-appvia" = {
+    description = "GitHub credentials for all repos under appvia"
+    url         = "https://github.com/appvia"
+    type        = "repo-creds"
+    # username / password, ssh_private_key, or secret_manager_arn as above
+    secret_manager_arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:github-org-token-XXXXX"
+  }
+}
+```
+
+Use `repository` when the secret should apply to a single clone URL; use `repo-creds` when `url` is intentionally a prefix (organization or host) so every matching Application repository reuses the same credentials.
+
 ## Update Documentation
 
 The `terraform-docs` utility is used to generate this README. Follow the below steps to update:
@@ -135,7 +155,7 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | <a name="input_cluster_type"></a> [cluster\_type](#input\_cluster\_type) | The type of cluster we are onboarding i.e. hub or standalone | `string` | `"standalone"` | no |
 | <a name="input_platform_repository"></a> [platform\_repository](#input\_platform\_repository) | The URL for the platform repository | `string` | `"https://github.com/gambol99/kubernetes-platform"` | no |
 | <a name="input_platform_revision"></a> [platform\_revision](#input\_platform\_revision) | The revision of the platform repository | `string` | `"HEAD"` | no |
-| <a name="input_repositories"></a> [repositories](#input\_repositories) | A collection of repository secrets to add to the argocd namespace | <pre>map(object({<br/>    ## The description of the repository<br/>    description = string<br/>    ## The secret to use for the repository<br/>    secret = optional(string, null)<br/>    ## The secret manager ARN to use for the secret<br/>    secret_manager_arn = optional(string, null)<br/>    ## The URL of the repository<br/>    url = string<br/>    ## An optional username for the repository<br/>    username = optional(string, null)<br/>    ## An optional password for the repository<br/>    password = optional(string, null)<br/>    ## An optional SSH private key for the repository<br/>    ssh_private_key = optional(string, null)<br/>  }))</pre> | `{}` | no |
+| <a name="input_repositories"></a> [repositories](#input\_repositories) | A collection of repository secrets to add to the argocd namespace | <pre>map(object({<br/>    ## The description of the repository<br/>    description = string<br/>    ## The secret to use for the repository<br/>    secret = optional(string, null)<br/>    ## The secret manager ARN to use for the secret<br/>    secret_manager_arn = optional(string, null)<br/>    ## The URL of the repository<br/>    url = string<br/>    ## An optional username for the repository<br/>    username = optional(string, null)<br/>    ## An optional password for the repository<br/>    password = optional(string, null)<br/>    ## An optional SSH private key for the repository<br/>    ssh_private_key = optional(string, null)<br/>    ## The type of secret (i.e. repository or repo-creds)<br/>    type = optional(string, "repository")<br/>  }))</pre> | `{}` | no |
 | <a name="input_revision_overrides"></a> [revision\_overrides](#input\_revision\_overrides) | Revision overrides permit the user to override the revision contained in cluster definition | <pre>object({<br/>    platform_revision = optional(string, null)<br/>    tenant_revision   = optional(string, null)<br/>  })</pre> | `null` | no |
 | <a name="input_tenant_path"></a> [tenant\_path](#input\_tenant\_path) | The path inside the tenant repository | `string` | `""` | no |
 | <a name="input_tenant_repository"></a> [tenant\_repository](#input\_tenant\_repository) | The URL of the tenant repository | `string` | `"https://github.com/gambol99/eks-tenant"` | no |

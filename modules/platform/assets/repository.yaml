@@ -5,10 +5,12 @@ metadata:
   name: argocd-repository-${name}
   namespace: argocd
   labels:
-    argocd.argoproj.io/secret-type: repository
+    argocd.argoproj.io/secret-type: ${type}
 type: Opaque
 stringData:
+%{~ if type == "repository" }
   type: git
+%{~ endif }
   url: ${url}
 %{~ if username != null }
   username: ${username}

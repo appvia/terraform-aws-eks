@@ -55,6 +55,7 @@ resource "kubectl_manifest" "repositories" {
     password        = try(coalesce(each.value.password, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["password"], null)), null)
     ssh_private_key = try(each.value.ssh_private_key, null)
     secret          = try(each.value.secret, null)
+    type            = try(each.value.type, "repository")
   })
 
   depends_on = [
