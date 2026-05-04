@@ -97,7 +97,7 @@ security-examples:
 		trivy config  --format table --exit-code  1 --severity  CRITICAL,HIGH --ignorefile .trivyignore $$dir; \
 	done;
 
-tests:
+tests: init
 	@echo "--> Running Terraform Tests"
 	@terraform test
 
