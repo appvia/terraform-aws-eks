@@ -216,6 +216,21 @@ variable "external_secrets" {
   default = {}
 }
 
+variable "aws_ack_acm" {
+  description = "The AWS ACK ACM configuration"
+  type = object({
+    ## Indicates if we should enable the AWS ACK ACM platform
+    enable = optional(bool, false)
+    ## The namespace to deploy the AWS ACK ACM platform to
+    namespace = optional(string, "ack-system")
+    ## The service account to deploy the AWS ACK ACM platform to
+    service_account = optional(string, "ack-acm-controller")
+    ## Managed policies to attach to the AWS ACK ACM platform
+    managed_policy_arns = optional(map(string), {})
+  })
+  default = {}
+}
+
 variable "aws_eks_ack" {
   description = "The AWS EKS ACK Controller configuration"
   type = object({

@@ -4,10 +4,12 @@
 mock_provider "aws" {
   mock_data "aws_secretsmanager_secret_version" {
     defaults = {
-      secret_string = jsonencode({
-        password = "secret-password-from-secrets-manager"
-        username = "test-user"
-      })
+      secret_string = <<EOF
+      {
+        "username" = "test-user"
+        "password" = "secret-password-from-secrets-manager"
+      }
+      EOF
     }
   }
 }
@@ -189,9 +191,9 @@ run "platform_secret_manager_arn_with_ssh_key" {
     cluster_name = "test-cluster"
     repositories = {
       "platform" = {
-        description        = "Platform repository with SSH key"
-        url                = "git@github.com:example/platform.git"
-        ssh_private_key    = join("", [
+        description = "Platform repository with SSH key"
+        url         = "git@github.com:example/platform.git"
+        ssh_private_key = join("", [
           "-----BEGIN RSA PRIVATE KEY-----",
           "\n",
           "MIIEpAIBAAKCAQEA1234567890",

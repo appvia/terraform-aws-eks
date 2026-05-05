@@ -27,6 +27,58 @@ module "pod_identity" {
   }
 }
 
+## Provision the pod identity for the AWS ACK ACM platform
+module "aws_ack_acm_pod_identity" {
+  count   = var.aws_ack_acm.enable ? 1 : 0
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "2.8.0"
+
+  name                               = "ack-acm-${local.name}"
+  description                        = "Pod identity for the AWS ACK ACM platform for the ${local.name} cluster"
+  additional_policy_arns             = try(var.aws_ack_acm.managed_policy_arns, {})
+  attach_aws_privateca_issuer_policy = true
+  attach_custom_policy               = true
+  custom_policy_description          = "Allow the AWS ACK ACM platform to manage certificates"
+  tags                               = local.tags
+
+  ## Custom policy statements for the AWS ACK ACM pod identity
+  policy_statements = [
+    {
+      sid    = "AllowACMManagement"
+      effect = "Allow"
+      actions = [
+        "acm:AddTagsToCertificate",
+        "acm:DeleteCertificate",
+        "acm:DescribeCertificate",
+        "acm:ExportCertificate",
+        "acm:GetCertificate",
+        "acm:GetAccountConfiguration",
+        "acm:ListCertificates",
+        "acm:ListTagsForCertificate",
+        "acm:RemoveTagsFromCertificate",
+        "acm:RequestCertificate",
+        "acm:ResendValidationEmail",
+        "acm:UpdateCertificateOptions",
+        "acm:RenewCertificate"
+      ]
+      resources = ["*"]
+    }
+  ]
+
+  ## Default association for the AWS ACK ACM pod identity
+  association_defaults = {
+    namespace       = try(var.aws_ack_acm.namespace, "ack-system")
+    service_account = try(var.aws_ack_acm.service_account, "ack-acm-controller")
+  }
+
+  # Pod Identity Associations
+  associations = {
+    addon = {
+      cluster_name = module.eks.cluster_name
+    }
+  }
+}
+
 ## Provision the pod identity for the AWS Load Balancer platform
 module "aws_load_balancer_pod_identity" {
   count   = var.aws_load_balancer.enable ? 1 : 0
@@ -153,7 +205,7 @@ module "aws_terranetes_pod_identity" {
   name                      = "terranetes-${local.name}"
   description               = "Pod identity for the Terranetes platform for the ${local.name} cluster"
   additional_policy_arns    = try(var.terranetes.managed_policy_arns, {})
-  custom_policy_description = "Provides the permisions for the terraform controller "
+  custom_policy_description = "Provides the permissions for the terraform controller to manage the cluster"
   permissions_boundary_arn  = try(var.terranetes.permissions_boundary_arn, null)
   tags                      = local.tags
 
@@ -206,11 +258,10 @@ module "aws_ack_iam_pod_identity" {
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.8.0"
 
-  name                      = "ack-iam-${local.name}"
-  description               = "Pod identity for the AWS ACK IAM platform for the ${local.name} cluster"
-  additional_policy_arns    = try(var.aws_ack_iam.managed_policy_arns, {})
-  custom_policy_description = "AWS IAM Controllers for the ACK system for the ${local.name} cluster"
-  tags                      = local.tags
+  name                   = "ack-iam-${local.name}"
+  description            = "Pod identity for the AWS ACK IAM platform for the ${local.name} cluster"
+  additional_policy_arns = try(var.aws_ack_iam.managed_policy_arns, {})
+  tags                   = local.tags
 
   ## Default association for the AWS ACK IAM pod identity
   association_defaults = {
