@@ -62,6 +62,16 @@ module "aws_ack_acm_pod_identity" {
         "acm:RenewCertificate"
       ]
       resources = ["*"]
+    },
+    {
+      sid    = "AllowSTS"
+      effect = "Allow"
+      actions = [
+        "sts:AssumeRole",
+        "sts:GetCallerIdentity",
+        "sts:TagSession"
+      ]
+      resources = ["*"]
     }
   ]
 
