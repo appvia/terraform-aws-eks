@@ -36,7 +36,6 @@ module "aws_ack_acm_pod_identity" {
   name                               = "ack-acm-${local.name}"
   description                        = "Pod identity for the AWS ACK ACM platform for the ${local.name} cluster"
   additional_policy_arns             = try(var.aws_ack_acm.managed_policy_arns, {})
-  attach_aws_privateca_issuer_policy = true
   attach_custom_policy               = true
   custom_policy_description          = "Allow the AWS ACK ACM platform to manage certificates"
   tags                               = local.tags
