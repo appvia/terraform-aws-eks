@@ -81,7 +81,7 @@ variable "efs_csi_driver" {
     ## Indicates if we should enable the EFS CSI driver
     enable = optional(bool, false)
     ## The version of the EFS CSI driver
-    version = optional(string, "v1.6.0-eksbuild.1")
+    version = optional(string, "v3.2.0-eksbuild.1")
     ## The service account to deploy the EFS CSI driver to
     service_account = optional(string, "efs-csi-controller-sa")
     ## The namespace to deploy the EFS CSI driver to
