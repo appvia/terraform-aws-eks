@@ -574,8 +574,6 @@ The `terraform-docs` utility is used to generate this README. Follow the below s
 | <a name="output_cluster_security_group_id"></a> [cluster\_security\_group\_id](#output\_cluster\_security\_group\_id) | The ID of the security group for the EKS cluster |
 | <a name="output_cluster_version"></a> [cluster\_version](#output\_cluster\_version) | The Kubernetes version of the EKS cluster |
 | <a name="output_cross_account_role_arn"></a> [cross\_account\_role\_arn](#output\_cross\_account\_role\_arn) | The cross account arn when we are using a hub |
-| <a name="output_ebs_csi_driver_pod_identity_arn"></a> [ebs\_csi\_driver\_pod\_identity\_arn](#output\_ebs\_csi\_driver\_pod\_identity\_arn) | The ARN of the EBS CSI driver pod identity |
-| <a name="output_efs_csi_driver_pod_identity_arn"></a> [efs\_csi\_driver\_pod\_identity\_arn](#output\_efs\_csi\_driver\_pod\_identity\_arn) | The ARN of the EFS CSI driver pod identity |
 | <a name="output_kms_key_arn"></a> [kms\_key\_arn](#output\_kms\_key\_arn) | The ARN of the KMS key used for encrypting secrets in the EKS cluster |
 | <a name="output_kms_key_id"></a> [kms\_key\_id](#output\_kms\_key\_id) | The ID of the KMS key used for encrypting secrets in the EKS cluster |
 | <a name="output_node_security_group_id"></a> [node\_security\_group\_id](#output\_node\_security\_group\_id) | The ID of the security group for the EKS cluster nodes |
