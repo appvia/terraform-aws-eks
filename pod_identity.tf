@@ -33,12 +33,12 @@ module "aws_ack_acm_pod_identity" {
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.8.0"
 
-  name                               = "ack-acm-${local.name}"
-  description                        = "Pod identity for the AWS ACK ACM platform for the ${local.name} cluster"
-  additional_policy_arns             = try(var.aws_ack_acm.managed_policy_arns, {})
-  attach_custom_policy               = true
-  custom_policy_description          = "Allow the AWS ACK ACM platform to manage certificates"
-  tags                               = local.tags
+  name                      = "ack-acm-${local.name}"
+  description               = "Pod identity for the AWS ACK ACM platform for the ${local.name} cluster"
+  additional_policy_arns    = try(var.aws_ack_acm.managed_policy_arns, {})
+  attach_custom_policy      = true
+  custom_policy_description = "Allow the AWS ACK ACM platform to manage certificates"
+  tags                      = local.tags
 
   ## Custom policy statements for the AWS ACK ACM pod identity
   policy_statements = [
