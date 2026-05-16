@@ -6,7 +6,7 @@ locals {
   ## Indicates if we should enable the EFS CSI driver
   enable_efs_csi_driver = try(var.efs_csi_driver.enable, false) ? true : false
   ## Indicates if we should enable the EFS pod identity for the EKS cluster
-  enable_efs_csi_pod_identity = try(local.efs_csi_driver.enable_pod_identity, false) ? true : false
+  enable_efs_csi_pod_identity = try(var.efs_csi_driver.enable_pod_identity, false) ? true : false
 }
 
 ## Attach the EFS CSI driver policy to the EKS cluster
