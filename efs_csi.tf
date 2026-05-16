@@ -5,13 +5,11 @@
 locals {
   ## Indicates if we should enable the EFS CSI driver
   enable_efs_csi_driver = try(var.efs_csi_driver.enable, false) ? true : false
-  ## Indicates if we should enable the EFS pod identity for the EKS cluster
-  enable_efs_csi_pod_identity = try(var.efs_csi_driver.enable_pod_identity, false) ? true : false
 }
 
 ## Attach the EFS CSI driver policy to the EKS cluster
 module "aws_efs_csi_pod_identity" {
-  count   = local.enable_efs_csi_driver && local.enable_efs_csi_pod_identity ? 1 : 0
+  count   = local.enable_efs_csi_driver ? 1 : 0
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.8.0"
 
