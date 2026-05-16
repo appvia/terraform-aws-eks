@@ -48,16 +48,6 @@ output "cross_account_role_arn" {
   value       = local.enable_cross_account_role ? try(aws_iam_role.argocd_cross_account_role[0].arn, null) : null
 }
 
-output "ebs_csi_driver_pod_identity_arn" {
-  description = "The ARN of the EBS CSI driver pod identity"
-  value       = local.enable_ebs_csi_driver ? module.aws_ebs_csi_pod_identity[0].iam_role_arn : null
-}
-
-output "efs_csi_driver_pod_identity_arn" {
-  description = "The ARN of the EFS CSI driver pod identity"
-  value       = local.enable_efs_csi_driver ? module.aws_efs_csi_pod_identity[0].iam_role_arn : null
-}
-
 output "kms_key_arn" {
   description = "The ARN of the KMS key used for encrypting secrets in the EKS cluster"
   value       = module.eks.kms_key_arn
