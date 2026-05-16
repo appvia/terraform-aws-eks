@@ -80,6 +80,9 @@ variable "efs_csi_driver" {
   type = object({
     ## Indicates if we should enable the EFS CSI driver
     enable = optional(bool, false)
+    ## Indicates if the pod identity for the EFS CSI driver should be
+    ## created before the compute nodes
+    enable_pod_identity = optional(bool, false)
     ## The version of the EFS CSI driver
     version = optional(string, "v3.2.0-eksbuild.1")
     ## The service account to deploy the EFS CSI driver to
