@@ -40,9 +40,4 @@ resource "aws_eks_addon" "ebs_csi_driver" {
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "OVERWRITE"
   tags                        = local.tags
-
-  pod_identity_association {
-    role_arn        = module.aws_ebs_csi_pod_identity[0].iam_role_arn
-    service_account = var.ebs_csi_driver.service_account
-  }
 }
