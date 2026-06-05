@@ -397,7 +397,7 @@ variable "security_group_additional_rules" {
 variable "kubernetes_version" {
   description = "Kubernetes version for the EKS cluster"
   type        = string
-  default     = "1.35"
+  default     = "1.36"
 }
 
 variable "node_pools" {
