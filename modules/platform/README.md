@@ -71,7 +71,8 @@ The secret in Secrets Manager should contain a JSON object with the required cre
 ```json
 {
   "password": "my-secret-password",
-  "username": "my-username"
+  "username": "my-username",
+  "ssh_private_key": "-----BEGIN OPENSSH PRIVATE KEY-----\\n...\\n-----END OPENSSH PRIVATE KEY-----"
 }
 ```
 

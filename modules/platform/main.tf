@@ -53,7 +53,7 @@ resource "kubectl_manifest" "repositories" {
     url             = try(each.value.url, null)
     username        = try(coalesce(each.value.username, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["username"], null)), null)
     password        = try(coalesce(each.value.password, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["password"], null)), null)
-    ssh_private_key = try(each.value.ssh_private_key, null)
+    ssh_private_key = try(coalesce(each.value.ssh_private_key, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["ssh_private_key"], null)), null)
     secret          = try(each.value.secret, null)
     type            = try(each.value.type, "repository")
   })

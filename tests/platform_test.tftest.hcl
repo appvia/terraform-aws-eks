@@ -6,8 +6,9 @@ mock_provider "aws" {
     defaults = {
       secret_string = <<EOF
       {
-        "username" = "test-user"
-        "password" = "secret-password-from-secrets-manager"
+        "username": "test-user",
+        "password": "secret-password-from-secrets-manager",
+        "ssh_private_key": "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEA1234567890\n-----END RSA PRIVATE KEY-----"
       }
       EOF
     }
@@ -191,15 +192,8 @@ run "platform_secret_manager_arn_with_ssh_key" {
     cluster_name = "test-cluster"
     repositories = {
       "platform" = {
-        description = "Platform repository with SSH key"
-        url         = "git@github.com:example/platform.git"
-        ssh_private_key = join("", [
-          "-----BEGIN RSA PRIVATE KEY-----",
-          "\n",
-          "MIIEpAIBAAKCAQEA1234567890",
-          "\n",
-          "-----END RSA PRIVATE KEY-----"
-        ])
+        description        = "Platform repository with SSH key from Secrets Manager"
+        url                = "git@github.com:example/platform.git"
         secret_manager_arn = run.setup_secrets_manager.secret_manager_arn
       }
     }
@@ -213,5 +207,10 @@ run "platform_secret_manager_arn_with_ssh_key" {
   assert {
     condition     = contains(keys(resource.kubectl_manifest.repositories), "platform")
     error_message = "Should create repository secret with SSH key"
+  }
+
+  assert {
+    condition     = strcontains(resource.kubectl_manifest.repositories["platform"].yaml_body, "ssh-private-key")
+    error_message = "Should include SSH private key from Secrets Manager"
   }
 }
