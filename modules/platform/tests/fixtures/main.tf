@@ -9,7 +9,8 @@ resource "aws_secretsmanager_secret" "repository_secret" {
 resource "aws_secretsmanager_secret_version" "repository_secret" {
   secret_id = aws_secretsmanager_secret.repository_secret.id
   secret_string = jsonencode({
-    username = "test-user"
-    password = "test-password"
+    username        = "test-user"
+    password        = "test-password"
+    ssh_private_key = "test-ssh-private-key"
   })
 }
