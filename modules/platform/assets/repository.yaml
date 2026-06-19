@@ -19,6 +19,7 @@ stringData:
   password: ${password}
 %{~ endif }
 %{~ if ssh_private_key != null }
+  insecure: "true"
   sshPrivateKey: |
     ${replace(replace(ssh_private_key, "\r\n", "\n"), "\n", "\n    ")}
 %{~ endif }
