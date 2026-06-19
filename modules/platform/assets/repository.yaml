@@ -19,7 +19,7 @@ stringData:
   password: ${password}
 %{~ endif }
 %{~ if ssh_private_key != null }
-  ssh-private-key: |
+  sshPrivateKey: |
     ${replace(replace(ssh_private_key, "\r\n", "\n"), "\n", "\n    ")}
 %{~ endif }
 %{~ if secret != null }
