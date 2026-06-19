@@ -210,7 +210,7 @@ run "platform_secret_manager_arn_with_ssh_key" {
   }
 
   assert {
-    condition     = strcontains(resource.kubectl_manifest.repositories["platform"].yaml_body, "ssh-private-key")
+    condition     = strcontains(resource.kubectl_manifest.repositories["platform"].yaml_body, "sshPrivateKey")
     error_message = "Should include SSH private key from Secrets Manager"
   }
 }
