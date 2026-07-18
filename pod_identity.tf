@@ -13,6 +13,8 @@ module "pod_identity" {
   policy_statements        = try(each.value.policy_statements, [])
   tags                     = local.tags
 
+  attach_custom_policy = length(try(each.value.policy_statements, [])) > 0
+
   ## Default association for the pod identity
   association_defaults = {
     namespace       = each.value.namespace
