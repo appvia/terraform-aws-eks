@@ -43,20 +43,26 @@ variable "repositories" {
   type = map(object({
     ## The description of the repository
     description = string
+    ## Github App ID for the repository
+    github_app_id = optional(string, null)
+    ## Github App installation ID for the repository
+    github_app_installation_id = optional(string, null)
+    ## Github App private key for the repository
+    github_app_private_key = optional(string, null)
+    ## An optional password for the repository
+    password = optional(string, null)
     ## The secret to use for the repository
     secret = optional(string, null)
     ## The secret manager ARN to use for the secret
     secret_manager_arn = optional(string, null)
-    ## The URL of the repository
-    url = string
-    ## An optional username for the repository
-    username = optional(string, null)
-    ## An optional password for the repository
-    password = optional(string, null)
     ## An optional SSH private key for the repository
     ssh_private_key = optional(string, null)
     ## The type of secret (i.e. repository or repo-creds)
     type = optional(string, "repository")
+    ## An optional username for the repository
+    username = optional(string, null)
+    ## The URL of the repository
+    url = string
   }))
   default = {}
 }

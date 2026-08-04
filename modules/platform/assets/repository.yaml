@@ -26,3 +26,13 @@ stringData:
 %{~ if secret != null }
   password: ${secret}
 %{~ endif }
+%{~ if github_app_id }
+  githubAppID: ${github_app_id}
+%{~ endif }
+%{~ if github_app_installation_id }
+  githubAppInstallationID: ${github_app_installation_id}
+%{~ endif }
+%{~ if github_app_private_key }
+  githubAppPrivateKey: |
+    ${github_app_private_key}
+%{~ endif }

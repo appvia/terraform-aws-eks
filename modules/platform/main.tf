@@ -49,13 +49,16 @@ resource "kubectl_manifest" "repositories" {
   for_each = var.repositories
 
   yaml_body = templatefile("${path.module}/assets/repository.yaml", {
-    name            = each.key
-    url             = try(each.value.url, null)
-    username        = try(coalesce(each.value.username, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["username"], null)), null)
-    password        = try(coalesce(each.value.password, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["password"], null)), null)
-    ssh_private_key = try(coalesce(each.value.ssh_private_key, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["ssh_private_key"], null)), null)
-    secret          = try(each.value.secret, null)
-    type            = try(each.value.type, "repository")
+    github_app_id              = try(each.value.github_app_id, null)
+    github_app_installation_id = try(each.value.github_app_installation_id, null)
+    github_app_private_key     = try(coalesce(each.value.github_app_private_key, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["github_app_private_key"], null)), null)
+    name                       = each.key
+    password                   = try(coalesce(each.value.password, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["password"], null)), null)
+    secret                     = try(each.value.secret, null)
+    ssh_private_key            = try(coalesce(each.value.ssh_private_key, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["ssh_private_key"], null)), null)
+    type                       = try(each.value.type, "repository")
+    url                        = try(each.value.url, null)
+    username                   = try(coalesce(each.value.username, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["username"], null)), null)
   })
 
   depends_on = [
