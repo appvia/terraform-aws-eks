@@ -49,8 +49,8 @@ resource "kubectl_manifest" "repositories" {
   for_each = var.repositories
 
   yaml_body = templatefile("${path.module}/assets/repository.yaml", {
-    github_app_id              = try(each.value.github_app_id, null)
-    github_app_installation_id = try(each.value.github_app_installation_id, null)
+    github_app_id              = try(coalesce(each.value.github_app_id, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["github_app_id"], null)), null)
+    github_app_installation_id = try(coalesce(each.value.github_app_installation_id, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["github_app_installation_id"], null)), null)
     github_app_private_key     = try(coalesce(each.value.github_app_private_key, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["github_app_private_key"], null)), null)
     name                       = each.key
     password                   = try(coalesce(each.value.password, try(jsondecode(data.aws_secretsmanager_secret_version.repository_secrets[each.key].secret_string)["password"], null)), null)
