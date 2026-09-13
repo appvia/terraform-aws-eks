@@ -66,7 +66,7 @@ repositories = {
 }
 ```
 
-The secret in Secrets Manager should contain a JSON object with the required credentials:
+The secret in Secrets Manager **must** be a JSON object (not a plain string) containing the required credentials. The module decodes the secret with `jsondecode()` and reads the individual keys, so a secret stored as a raw value will be silently ignored. Supported keys are `username`, `password`, `ssh_private_key`, `github_app_id`, `github_app_installation_id` and `github_app_private_key`:
 
 ```json
 {
@@ -104,6 +104,59 @@ repositories = {
   }
 }
 ```
+
+#### Using GitHub Apps
+
+Argo CD can authenticate to GitHub using a [GitHub App](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#repositories) instead of a personal access token or SSH key. Provide the App ID, the installation ID and the App's private key, either inline or via Secrets Manager:
+
+```hcl
+repositories = {
+  "my-repo" = {
+    description                = "My repository"
+    url                        = "https://github.com/example/my-repo.git"
+    github_app_id              = "123456"
+    github_app_installation_id = "12345678"
+    github_app_private_key     = file("${path.module}/my-app.private-key.pem")
+  }
+}
+```
+
+When storing the GitHub App credentials in AWS Secrets Manager, the secret string **must be a JSON object** with the `github_app_id`, `github_app_installation_id` and `github_app_private_key` keys. Do not upload the raw `.pem` file as the secret value; the module will fail to decode it and the credentials will not be applied.
+
+The private key is a multi-line PEM file, so the newlines must be correctly escaped inside the JSON string. The safest way to produce a valid secret is to let `jq` build the JSON for you:
+
+```bash
+jq -n \
+  --arg app_id "123456" \
+  --arg installation_id "12345678" \
+  --rawfile key /path/to/your-app.private-key.pem \
+  '{github_app_id: $app_id, github_app_installation_id: $installation_id, github_app_private_key: $key}' \
+  > my-repo-credentials.json
+
+aws secretsmanager create-secret \
+  --name my-repo-credentials \
+  --secret-string file://my-repo-credentials.json
+```
+
+If you prefer to keep the App ID and installation ID in the Terraform configuration and only store the private key in Secrets Manager, the secret still needs to be JSON:
+
+```bash
+jq -n --rawfile key /path/to/your-app.private-key.pem '{github_app_private_key: $key}'
+```
+
+```hcl
+repositories = {
+  "my-repo" = {
+    description                = "My repository"
+    url                        = "https://github.com/example/my-repo.git"
+    github_app_id              = "123456"
+    github_app_installation_id = "12345678"
+    secret_manager_arn         = "arn:aws:secretsmanager:us-east-1:123456789012:secret:my-repo-credentials-XXXXX"
+  }
+}
+```
+
+Values set inline take precedence over the corresponding keys in the Secrets Manager secret.
 
 #### Repository secret type (`type`)
 
