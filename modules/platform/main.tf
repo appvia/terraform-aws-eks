@@ -20,7 +20,11 @@ resource "kubectl_manifest" "admin_password" {
   ]
 }
 
-## Provision the ArgoCD Helm chart
+## Provision the ArgoCD Helm chart. This only bootstraps Argo CD: the platform repository then manages
+## Argo CD itself (the argocd feature, enabled on hub and standalone clusters), at that repository's
+## chart version and values. Later changes to the version or values are ignored, as an upgrade from
+## here would put a different Argo CD over the running one until it healed itself, and fail on the
+## objects Argo CD created (such as its NetworkPolicies from argo-cd 10.0.0).
 resource "helm_release" "argocd" {
   name             = "argocd"
   chart            = var.argocd_chart
@@ -29,6 +33,10 @@ resource "helm_release" "argocd" {
   repository       = var.argocd_helm_repository
   version          = var.argocd_version
   values           = concat([file("${path.module}/assets/values.yaml")], var.argocd_values)
+
+  lifecycle {
+    ignore_changes = [version, values]
+  }
 
   depends_on = [
     kubectl_manifest.namespace,
