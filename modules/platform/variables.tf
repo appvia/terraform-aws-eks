@@ -24,7 +24,7 @@ variable "argocd_helm_repository" {
 }
 
 variable "argocd_values" {
-  description = "Additional values to add to the argocd Helm chart"
+  description = "Additional values to add to the argocd Helm chart, used only when Argo CD is first installed"
   type        = list(string)
   default     = []
 }
@@ -68,7 +68,7 @@ variable "repositories" {
 }
 
 variable "argocd_version" {
-  description = "Version of ArgoCD Helm chart to install"
+  description = "Version of ArgoCD Helm chart to install, used only when Argo CD is first installed; the platform repository manages it after that"
   type        = string
   default     = "10.9.0"
 }
