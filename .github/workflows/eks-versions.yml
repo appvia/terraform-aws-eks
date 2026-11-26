@@ -46,11 +46,20 @@ jobs:
     env:
       AWS_REGION: ${{ vars.EKS_VERSION_CHECK_REGION || 'eu-west-2' }}
     steps:
+      - name: Check Configuration
+        env:
+          ROLE_ARN: ${{ vars.EKS_VERSION_CHECK_ROLE_ARN }}
+        run: |
+          if [[ -z "${ROLE_ARN}" ]]; then
+            echo "::error title=Missing configuration::Repository variable EKS_VERSION_CHECK_ROLE_ARN is not set (Settings > Secrets and variables > Actions > Variables)"
+            exit 1
+          fi
+
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ vars.EKS_VERSION_CHECK_ROLE_ARN }}
           role-session-name: eks-version-check
@@ -69,7 +78,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.versions.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ github.token }}
           branch: chore/eks-versions
