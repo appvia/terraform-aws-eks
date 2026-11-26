@@ -1,0 +1,85 @@
+---
+name: EKS Version Check
+
+# Checks Amazon EKS for a newer Kubernetes version, or newer addon versions for
+# the current one, and raises (or updates) a single pull request with the bump.
+#
+# Repository configuration:
+#   vars.EKS_VERSION_CHECK_ROLE_ARN  IAM role assumed via GitHub OIDC; needs
+#                                    eks:DescribeClusterVersions and
+#                                    eks:DescribeAddonVersions only
+#   vars.EKS_VERSION_CHECK_REGION    AWS region to query (default: eu-west-2)
+#   Settings > Actions > General     enable "Allow GitHub Actions to create and
+#                                    approve pull requests"
+#
+# The PR is opened with GITHUB_TOKEN. GitHub does not trigger workflows from
+# events created by GITHUB_TOKEN, so the Terraform validation workflow will not
+# run on the PR automatically; close and reopen the PR (or push to it) to run it.
+
+on:
+  schedule:
+    # Mondays 06:00 UTC, alongside the Renovate schedule
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      addon-strategy:
+        description: "Addon version to pick for the Kubernetes version"
+        type: choice
+        default: latest
+        options:
+          - latest
+          - default
+
+permissions:
+  contents: write
+  id-token: write
+  pull-requests: write
+
+concurrency:
+  group: eks-version-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Check EKS Versions
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ vars.EKS_VERSION_CHECK_REGION || 'eu-west-2' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.EKS_VERSION_CHECK_ROLE_ARN }}
+          role-session-name: eks-version-check
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Resolve and Apply Versions
+        id: versions
+        env:
+          ADDON_STRATEGY: ${{ inputs.addon-strategy || 'latest' }}
+          SUMMARY_FILE: ${{ runner.temp }}/pr-body.md
+        run: |
+          bash .github/scripts/eks-versions.sh
+          if [[ -f "${SUMMARY_FILE}" ]]; then
+            cat "${SUMMARY_FILE}" >> "${GITHUB_STEP_SUMMARY}"
+          fi
+
+      - name: Create Pull Request
+        if: steps.versions.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+          branch: chore/eks-versions
+          delete-branch: true
+          add-paths: |
+            variables.tf
+            README.md
+          commit-message: ${{ steps.versions.outputs.title }}
+          title: ${{ steps.versions.outputs.title }}
+          body-path: ${{ runner.temp }}/pr-body.md
+          labels: |
+            dependencies
+            ${{ steps.versions.outputs.kubernetes_changed == 'true' && 'kubernetes-upgrade' || '' }}
