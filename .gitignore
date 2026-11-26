@@ -54,3 +54,4 @@ builds/
 examples/basic/.terraform.lock.hcl
 ## Worktree directorys
 worktrees/
+/.worktrees

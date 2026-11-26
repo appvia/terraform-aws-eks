@@ -1,6 +1,10 @@
 ## Test platform module secret_manager_arn functionality
 ## These tests validate that the secret_manager_arn feature works correctly for repository configurations
 
+## The kubectl provider (v3+) validates its configuration eagerly, so mock it to
+## avoid requiring a kubeconfig in CI
+mock_provider "kubectl" {}
+
 mock_provider "aws" {
   mock_data "aws_secretsmanager_secret_version" {
     defaults = {

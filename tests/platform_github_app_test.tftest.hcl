@@ -2,6 +2,10 @@
 ## These tests validate that Github App credentials can be sourced inline or from AWS
 ## Secrets Manager, and that repositories without Github App credentials still render.
 
+## The kubectl provider (v3+) validates its configuration eagerly, so mock it to
+## avoid requiring a kubeconfig in CI
+mock_provider "kubectl" {}
+
 ## Note the Github App identifiers are deliberately mocked as JSON numbers rather than
 ## strings; Secrets Manager payloads are frequently written that way, and the rendered
 ## manifest must still quote them because Secret.stringData is a map[string]string.
