@@ -44,7 +44,7 @@ variable "ebs_csi_driver" {
     ## The KMS key ARNs to allow the EBS CSI driver to manage encrypted volumes
     kms_key_arns = optional(list(string), [])
     ## The version of the EBS CSI driver
-    version = optional(string, "v1.51.0-eksbuild.1")
+    version = optional(string, "v1.68.1-eksbuild.1")
     ## The service account to deploy the EBS CSI driver to
     service_account = optional(string, "ebs-csi-controller-sa")
     ## The namespace to deploy the EBS CSI driver to
@@ -81,7 +81,7 @@ variable "efs_csi_driver" {
     ## Indicates if we should enable the EFS CSI driver
     enable = optional(bool, false)
     ## The version of the EFS CSI driver
-    version = optional(string, "v3.2.0-eksbuild.1")
+    version = optional(string, "v3.6.0-eksbuild.1")
     ## The service account to deploy the EFS CSI driver to
     service_account = optional(string, "efs-csi-controller-sa")
     ## The namespace to deploy the EFS CSI driver to
@@ -397,7 +397,7 @@ variable "security_group_additional_rules" {
 variable "kubernetes_version" {
   description = "Kubernetes version for the EKS cluster"
   type        = string
-  default     = "1.36"
+  default     = "1.37"
 }
 
 variable "node_pools" {
